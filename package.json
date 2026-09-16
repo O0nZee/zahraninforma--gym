@@ -1,0 +1,13 @@
+{
+  "name": "zahran-informa",
+  "version": "1.0.0",
+  "private": true,
+  "description": "Gym management app with online/offline sync.",
+  "main": "server.js",
+  "scripts": {
+    "start": "node server.js"
+  },
+  "engines": {
+    "node": ">=20"
+  }
+}

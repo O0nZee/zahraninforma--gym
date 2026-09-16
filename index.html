@@ -1,0 +1,1035 @@
+<!doctype html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="Zahran Informa">
+    <meta name="theme-color" content="#111827">
+    <meta name="mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-title" content="Zahran Informa">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+    <title>Zahran Informa</title>
+    <link rel="manifest" href="manifest.webmanifest">
+    <link rel="apple-touch-icon" href="assets/zahran-informa-logo.png">
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body class="locked">
+    <section class="owner-login" id="owner-login" aria-label="دخول صاحب الجيم">
+        <div class="login-shell">
+        <div class="login-card">
+            <img class="login-logo" src="assets/zahran-informa-logo.png" alt="Zahran Informa">
+            <p class="eyebrow">خاص بصاحب الجيم فقط</p>
+            <h1>Zahran Informa</h1>
+            <p class="login-copy" id="login-copy">
+                أول مرة افتح الصفحة واعمل كود دخول خاص بيك. بعد كده محدش يدخل غير بالكود ده.
+            </p>
+
+            <form class="owner-form" id="owner-form">
+                <label>
+                    كود صاحب الجيم
+                    <input id="owner-code" type="password" minlength="4" autocomplete="current-password" placeholder="اكتب كود خاص بيك" required>
+                </label>
+                <button type="submit" id="owner-submit">تفعيل الدخول</button>
+                <p class="form-note" id="owner-message" role="status"></p>
+            </form>
+            <button class="secondary-action biometric-login-btn" type="button" id="owner-biometric-login" hidden>دخول بالبصمة</button>
+            <p class="form-note" id="biometric-login-message" role="status"></p>
+        </div>
+
+        <section class="member-login-panel" id="member-mobile-panel" aria-label="كارت اللاعب على الموبايل">
+            <div class="install-strip" id="install-strip" hidden>
+                <span>جاهز للتثبيت على الموبايل</span>
+                <button type="button" id="install-app-btn">تثبيت</button>
+            </div>
+
+            <div class="member-panel-heading">
+                <p class="eyebrow">دخول اللاعب</p>
+                <h2>كارت الموبايل</h2>
+            </div>
+
+            <form class="member-portal-form" id="member-portal-form">
+                <label>
+                    كود اللاعب أو رقم الهاتف
+                    <input type="search" id="member-portal-query" autocomplete="one-time-code" placeholder="ZI-2026 أو 01xxxxxxxxx" required>
+                </label>
+                <button type="submit">فتح الكارت</button>
+                <p class="form-message" id="member-portal-message" role="status"></p>
+            </form>
+
+            <div class="member-portal-result" id="member-portal-result"></div>
+        </section>
+        </div>
+    </section>
+
+    <main class="app-shell" id="app-shell" aria-label="لوحة تسجيل المشتركين">
+        <aside class="sidebar" id="sidebar">
+            <a class="brand" href="#top" aria-label="Zahran Informa">
+                <img src="assets/zahran-informa-logo.png" alt="Zahran Informa Logo">
+                <span>
+                    <strong id="brand-name">Zahran Informa</strong>
+                    <small>Zahran Informa</small>
+                </span>
+            </a>
+
+            <nav class="side-nav" aria-label="قائمة لوحة المالك">
+                <a href="#dashboard" class="active" data-page-link="dashboard" data-nav-icon="▦">لوحة التحكم</a>
+                <a href="#members" data-page-link="members" data-nav-icon="👥">الأعضاء</a>
+                <a href="#subscriptions" data-page-link="subscriptions" data-nav-icon="▭">إضافة مشترك جديد</a>
+                <a href="#sessions" data-page-link="sessions" data-nav-icon="⌁">الحصص</a>
+                <a href="#attendance" data-page-link="attendance" data-nav-icon="▣">الحضور</a>
+                <a href="#qr-scan" data-page-link="attendance" data-nav-icon="📷" id="qr-scan-nav-link" onclick="scrollToQrScanner(event)">مسح QR حضور</a>
+                <a href="#payments" data-page-link="payments" data-nav-icon="▤">الخزنة</a>
+                <a href="#reports" data-page-link="reports" data-nav-icon="▥">التقارير</a>
+                <a href="#settings" data-page-link="settings" data-nav-icon="⚙">الإعدادات</a>
+            </nav>
+
+            <button class="logout-btn" id="logout-btn" type="button">تسجيل خروج</button>
+        </aside>
+        <button class="sidebar-backdrop" id="sidebar-backdrop" type="button" aria-label="إغلاق القائمة" hidden></button>
+
+        <section class="content">
+            <header class="topbar" id="top">
+                <button class="menu-toggle-btn" id="menu-toggle-btn" type="button" aria-label="فتح القائمة" aria-controls="sidebar" aria-expanded="false">
+                    <span></span>
+                    <span></span>
+                    <span></span>
+                </button>
+                <div>
+                    <p class="eyebrow">لوحة صاحب الجيم</p>
+                    <h1 id="page-title">إضافة مشترك جديد</h1>
+                </div>
+                <div class="topbar-actions">
+                    <div class="zoom-controls" aria-label="تكبير وتصغير الواجهة">
+                        <button type="button" id="zoom-out-btn" aria-label="تصغير الواجهة" title="تصغير">-</button>
+                        <strong id="zoom-level">100%</strong>
+                        <button type="button" id="zoom-in-btn" aria-label="تكبير الواجهة" title="تكبير">+</button>
+                        <button type="button" id="zoom-reset-btn" aria-label="إعادة حجم الواجهة" title="100%">100</button>
+                    </div>
+                    <button class="theme-toggle" id="theme-toggle" type="button" aria-label="تبديل الوضع" title="تبديل الوضع">
+                        <svg class="theme-icon theme-icon-moon" viewBox="0 0 24 24" aria-hidden="true">
+                            <path d="M21 14.5A8.5 8.5 0 0 1 9.5 3 7 7 0 1 0 21 14.5Z"></path>
+                        </svg>
+                        <svg class="theme-icon theme-icon-sun" viewBox="0 0 24 24" aria-hidden="true">
+                            <circle cx="12" cy="12" r="4"></circle>
+                            <path d="M12 2v2M12 20v2M4.93 4.93l1.41 1.41M17.66 17.66l1.41 1.41M2 12h2M20 12h2M4.93 19.07l1.41-1.41M17.66 6.34l1.41-1.41"></path>
+                        </svg>
+                    </button>
+                    <div class="owner-badge">
+                        <span id="storage-status">تخزين محلي</span>
+                        <strong id="total-members">0 مشترك</strong>
+                    </div>
+                </div>
+            </header>
+
+            <section class="dashboard-grid page-section" data-page="dashboard">
+                <article class="stat-card">
+                    <span>إجمالي المشتركين</span>
+                    <strong id="stat-total">0</strong>
+                </article>
+                <article class="stat-card">
+                    <span>آخر كود</span>
+                    <strong id="stat-last-code">-</strong>
+                </article>
+                <article class="stat-card">
+                    <span>آخر تسجيل</span>
+                    <strong id="stat-last-date">-</strong>
+                </article>
+                <article class="stat-card dashboard-chart-card">
+                    <span>مؤشر النشاط</span>
+                    <div class="mini-chart" aria-hidden="true">
+                        <i style="--h: 44%"></i>
+                        <i style="--h: 72%"></i>
+                        <i style="--h: 92%"></i>
+                        <i style="--h: 66%"></i>
+                        <i style="--h: 78%"></i>
+                    </div>
+                    <small>متابعة سريعة للحضور والاشتراكات</small>
+                </article>
+            </section>
+
+            <section class="panel page-section quick-attendance-panel" id="quick-attendance" data-page="attendance" hidden>
+                <div class="panel-heading">
+                    <div>
+                        <p class="eyebrow">حضور سريع</p>
+                        <h2>تسجيل حضور لاعب</h2>
+                    </div>
+                    <p>اكتب الكود أو الاسم أو رقم الموبايل لتسجيل الحضور مباشرة.</p>
+                </div>
+
+                <form class="quick-attendance-form" id="quick-attendance-form">
+                    <label>
+                        بحث عن اللاعب
+                        <input type="search" id="quick-attendance-query" name="query" placeholder="مثال: ZI-2026 أو اسم اللاعب أو رقم الهاتف" required>
+                    </label>
+                    <button type="submit">تسجيل حضور</button>
+                    <p class="form-message" id="quick-attendance-message" role="status"></p>
+                </form>
+                <section class="quick-attendance-camera" aria-label="تصوير الحضور">
+                    <div class="attendance-photo-preview" id="quick-attendance-photo-preview">
+                        <span>صورة الحضور</span>
+                        <img id="quick-attendance-photo-img" alt="معاينة صورة الحضور" hidden>
+                    </div>
+                    <div class="camera-box">
+                        <video id="quick-attendance-camera" autoplay muted playsinline hidden></video>
+                        <canvas id="quick-attendance-canvas" hidden></canvas>
+                        <input type="hidden" id="quick-attendance-photo-data">
+                        <div class="camera-actions">
+                            <button class="secondary-action" id="start-attendance-camera-btn" type="button">فتح كاميرا الحضور</button>
+                            <button class="secondary-action camera-switch-btn" id="switch-attendance-camera-btn" type="button">الكاميرا الأمامية</button>
+                            <button class="secondary-action" id="capture-attendance-photo-btn" type="button" disabled>التقاط صورة حضور</button>
+                            <label class="upload-photo-btn camera-direct-btn">
+                                📱 تصوير مباشر للموبايل
+                                <input id="native-attendance-camera-input" type="file" accept="image/*" capture="user">
+                            </label>
+                            <label class="upload-photo-btn">
+                                رفع صورة حضور
+                                <input id="attendance-photo-upload-input" type="file" accept="image/*">
+                            </label>
+                            <button class="secondary-action" id="clear-attendance-photo-btn" type="button" disabled>مسح الصورة</button>
+                            <button class="secondary-action danger-action" id="stop-attendance-camera-btn" type="button" disabled>إيقاف</button>
+                        </div>
+                        <p class="camera-message" id="quick-attendance-camera-message" role="status"></p>
+                    </div>
+                </section>
+                <div class="quick-attendance-result" id="quick-attendance-result"></div>
+
+                <!-- QR Code Scanner Section -->
+                <section class="qr-scanner-panel" id="qr-scanner-panel" aria-label="مسح QR للحضور">
+                    <div class="panel-heading">
+                        <div>
+                            <p class="eyebrow">مسح QR</p>
+                            <h3>تسجيل حضور عبر QR Code</h3>
+                        </div>
+                        <p>افتح الكاميرا وامسح QR المشترك لتسجيل حضوره تلقائياً.</p>
+                    </div>
+
+                    <div class="qr-scanner-box">
+                        <div class="qr-video-wrap" id="qr-video-wrap" hidden>
+                            <video id="qr-scanner-video" autoplay muted playsinline></video>
+                            <canvas id="qr-scanner-canvas" hidden></canvas>
+                            <div class="qr-scanner-overlay">
+                                <div class="qr-scanner-frame"></div>
+                                <p class="qr-scanner-hint">ضع QR Code داخل الإطار</p>
+                            </div>
+                        </div>
+
+                        <div class="qr-scanner-actions">
+                            <button class="secondary-action" id="start-qr-scan-btn" type="button">📷 فتح كاميرا QR</button>
+                            <button class="secondary-action danger-action" id="stop-qr-scan-btn" type="button" hidden>إيقاف المسح</button>
+                        </div>
+
+                        <p class="form-message" id="qr-scan-message" role="status"></p>
+
+                        <div class="qr-scan-result" id="qr-scan-result" hidden>
+                            <div class="qr-result-card">
+                                <div class="qr-result-icon" id="qr-result-icon">✅</div>
+                                <div class="qr-result-info">
+                                    <strong id="qr-result-name">اسم المشترك</strong>
+                                    <span id="qr-result-code">ZI-0000</span>
+                                    <span id="qr-result-plan">الباقة</span>
+                                    <span id="qr-result-msg" class="qr-result-status">تم تسجيل الحضور</span>
+                                </div>
+                            </div>
+                            <button class="secondary-action" id="qr-scan-again-btn" type="button">مسح مشترك آخر 🔄</button>
+                        </div>
+                    </div>
+                </section>
+            </section>
+
+            <section class="panel page-section" id="register" data-page="subscriptions" hidden>
+                <div class="panel-heading">
+                    <div>
+                        <p class="eyebrow">مشترك جديد</p>
+                        <h2>بيانات المشترك</h2>
+                    </div>
+                    <p>الكود الخاص بيتولد تلقائيًا ومش بيتكرر بين المشتركين.</p>
+                </div>
+
+                <form class="member-form" id="member-form">
+                    <label>
+                        كود المشترك
+                        <input type="text" name="code" autocomplete="off" placeholder="سيبه فاضي للتوليد التلقائي">
+                    </label>
+                    <label>
+                        اسم المشترك
+                        <input type="text" name="name" placeholder="مثال: أحمد محمد" required>
+                    </label>
+                    <label>
+                        رقم الهاتف
+                        <input type="tel" name="phone" placeholder="01xxxxxxxxx">
+                    </label>
+                    <label>
+                        وزن المشترك
+                        <input type="number" name="weight" id="weight-input" min="0" step="0.1" placeholder="مثال: 82.5">
+                    </label>
+                    <label>
+                        طول المشترك
+                        <input type="number" name="height" id="height-input" min="0" step="0.1" placeholder="مثال: 176">
+                    </label>
+                    <label>
+                        نوع الاشتراك
+                        <select name="plan" id="plan-select">
+                            <option value="نص شهر">نص شهر</option>
+                            <option value="شهر">شهر</option>
+                            <option value="10 أيام">10 أيام</option>
+                        </select>
+                    </label>
+                    <label>
+                        سعر الاشتراك
+                        <input type="number" name="price" id="price-input" min="0" step="1" placeholder="مثال: 500">
+                    </label>
+                    <label>
+                        الأيام المتاحة
+                        <input type="number" name="remainingDays" id="remaining-days-input" min="0" step="1" placeholder="مثال: 30">
+                    </label>
+                    <label class="checkbox-label" style="display:flex;align-items:center;gap:8px;grid-column:1/-1;cursor:pointer;margin:8px 0;font-weight:600;color:var(--text-main,#e5e7eb);">
+                        <input type="checkbox" name="approvedForMemberApp" id="approved-for-member-app-checkbox" checked style="width:18px;height:18px;accent-color:#10b981;">
+                        <span>📱 تفعيل حساب المشترك في تطبيق المستخدمين (المتدربين)</span>
+                    </label>
+                    <section class="photo-capture" aria-label="تصوير المشترك">
+                        <div class="photo-preview" id="photo-preview">
+                            <span>صورة المشترك</span>
+                            <img id="member-photo-preview" alt="معاينة صورة المشترك" hidden>
+                        </div>
+                        <div class="camera-box">
+                            <video id="member-camera" autoplay muted playsinline hidden></video>
+                            <canvas id="member-photo-canvas" hidden></canvas>
+                            <input type="hidden" name="photo" id="member-photo-data">
+                            <div class="camera-actions">
+                                <button class="secondary-action" id="start-camera-btn" type="button">فتح الكاميرا</button>
+                                <button class="secondary-action camera-switch-btn" id="switch-camera-btn" type="button">الكاميرا الأمامية</button>
+                                <button class="secondary-action" id="capture-photo-btn" type="button" disabled>التقاط وتحسين ذكي</button>
+                                <label class="upload-photo-btn camera-direct-btn">
+                                    📱 تصوير مباشر للموبايل
+                                    <input id="native-photo-camera-input" type="file" accept="image/*" capture="user">
+                                </label>
+                                <label class="upload-photo-btn">
+                                    رفع صورة
+                                    <input id="photo-upload-input" type="file" accept="image/*">
+                                </label>
+                                <button class="secondary-action danger-action" id="stop-camera-btn" type="button" disabled>إيقاف</button>
+                            </div>
+                            <p class="camera-message" id="camera-message" role="status"></p>
+                        </div>
+                    </section>
+                    <button type="submit">تسجيل المشترك</button>
+                </form>
+
+                <div class="generated-code" id="generated-code" hidden>
+                    <span>الكود الخاص بالمشترك</span>
+                    <strong id="new-member-code"></strong>
+                </div>
+            </section>
+
+            <section class="panel page-section sessions-page" id="sessions-page" data-page="sessions" hidden>
+                <div class="panel-heading">
+                    <div>
+                        <p class="eyebrow">الحصص و PT</p>
+                        <h2>متابعة أصحاب الحصص</h2>
+                    </div>
+                    <p>كل اللاعبين المسجلين بنظام حصص أو PT في صفحة لوحدها، مع تسجيل حضور سريع لكل لاعب.</p>
+                </div>
+
+                <div class="members-toolbar">
+                    <div>
+                        <span>مشتركي الحصص</span>
+                        <strong id="sessions-page-count">0 لاعب</strong>
+                    </div>
+                    <button class="secondary-action" type="button" id="refresh-sessions">تحديث الحصص</button>
+                </div>
+
+                <div class="sessions-list" id="sessions-list">
+                    <article class="empty-progress-card">لسه مفيش لاعبين بنظام حصص أو PT.</article>
+                </div>
+            </section>
+
+            <section class="panel page-section" id="members" data-page="members" hidden>
+                <div class="panel-heading">
+                    <div>
+                        <p class="eyebrow">قاعدة المشتركين</p>
+                        <h2>المشتركين المسجلين</h2>
+                    </div>
+                    <input class="search-input" id="search-input" type="search" placeholder="بحث بالاسم أو الهاتف أو الكود">
+                </div>
+
+                <div class="members-toolbar">
+                    <div>
+                        <span>قاعدة بيانات المشتركين</span>
+                        <strong id="members-page-count">0 مشترك</strong>
+                    </div>
+                    <button class="secondary-action" type="button" id="refresh-members">تحديث البيانات</button>
+                </div>
+
+                <div class="table-wrap">
+                    <table>
+                        <thead>
+                            <tr>
+                                <th>الكود</th>
+                                <th>الصورة</th>
+                                <th>اسم المشترك</th>
+                                <th>رقم الهاتف</th>
+                                <th>الوزن</th>
+                                <th>الطول</th>
+                                <th>نوع الاشتراك</th>
+                                <th>السعر</th>
+                                <th>المتبقي</th>
+                                <th>الحضور</th>
+                                <th>موافقة التطبيق</th>
+                                <th>تاريخ التسجيل</th>
+                                <th>إجراء</th>
+                            </tr>
+                        </thead>
+                        <tbody id="members-table">
+                            <tr>
+                                <td colspan="13" class="empty-cell">لسه مفيش مشتركين.</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </section>
+
+            <section class="panel page-section" id="settings" data-page="settings" hidden>
+                <div class="panel-heading">
+                    <div>
+                        <p class="eyebrow">إعدادات حقيقية</p>
+                        <h2>إعدادات الجيم والنظام</h2>
+                    </div>
+                    <p>تحكم كامل في بيانات الجيم، طريقة الأكواد، الاشتراكات، والتنبيهات.</p>
+                </div>
+
+                <div class="settings-control-grid">
+                    <article>
+                        <span>اسم الجيم</span>
+                        <strong id="settings-preview-name">Zahran Informa</strong>
+                    </article>
+                    <article>
+                        <span>بادئة الأكواد</span>
+                        <strong id="settings-preview-prefix">ZI</strong>
+                    </article>
+                    <article>
+                        <span>الحفظ</span>
+                        <strong id="settings-preview-storage">تخزين فعلي</strong>
+                    </article>
+                    <article class="settings-action-card">
+                        <span>باسورد الموقع</span>
+                        <strong>تغيير آمن</strong>
+                        <button type="button" id="jump-password-settings">تغيير الباسورد</button>
+                    </article>
+                </div>
+
+                <form class="settings-form" id="settings-form">
+                    <label>
+                        اسم الجيم
+                        <input type="text" name="gymName" placeholder="Zahran Informa">
+                    </label>
+                    <label>
+                        رقم تواصل الجيم
+                        <input type="tel" name="gymPhone" placeholder="01xxxxxxxxx">
+                    </label>
+                    <label>
+                        إيميل حساب المزامنة
+                        <input type="email" name="ownerEmail" placeholder="owner@example.com">
+                    </label>
+                    <label>
+                        مفتاح مزامنة الحساب
+                        <input type="password" name="syncToken" minlength="8" autocomplete="new-password" placeholder="اكتب نفس المفتاح على كل الأجهزة">
+                    </label>
+                    <div class="sync-token-actions">
+                        <span id="sync-token-status">مفتاح المزامنة يحمي الحساب مع الإيميل.</span>
+                        <button class="secondary-action" type="button" id="generate-sync-token">توليد مفتاح قوي</button>
+                    </div>
+                    <label>
+                        بادئة كود المشترك
+                        <input type="text" name="memberCodePrefix" maxlength="6" placeholder="ZI">
+                    </label>
+                    <label>
+                        الاشتراك الافتراضي
+                        <select name="defaultPlan">
+                            <option value="نص شهر">نص شهر</option>
+                            <option value="شهر">شهر</option>
+                            <option value="10 أيام">10 أيام</option>
+                        </select>
+                    </label>
+                    <label>
+                        حفظ تلقائي للنسخ الاحتياطي
+                        <select name="autoBackup">
+                            <option value="enabled">مفعل</option>
+                            <option value="disabled">غير مفعل</option>
+                        </select>
+                    </label>
+                    <label>
+                        تنبيه قبل انتهاء الاشتراك
+                        <select name="expiryReminderDays">
+                            <option value="3">قبل 3 أيام</option>
+                            <option value="5">قبل 5 أيام</option>
+                            <option value="7">قبل 7 أيام</option>
+                            <option value="10">قبل 10 أيام</option>
+                        </select>
+                    </label>
+                    <label>
+                        حالة استقبال مشتركين جدد
+                        <select name="registrationStatus">
+                            <option value="open">مفتوح</option>
+                            <option value="closed">مغلق مؤقتًا</option>
+                        </select>
+                    </label>
+                    <label>
+                        أقل مدة بحث قبل التنبيه
+                        <select name="inactiveMemberDays">
+                            <option value="14">غائب 14 يوم</option>
+                            <option value="21">غائب 21 يوم</option>
+                            <option value="30">غائب 30 يوم</option>
+                        </select>
+                    </label>
+                    <label>
+                        طريقة حفظ البيانات
+                        <select name="storageMode">
+                            <option value="mobile-sync">موبايل أونلاين / أوفلاين</option>
+                            <option value="offline-desktop">تطبيق أوفلاين على الجهاز</option>
+                            <option value="local-server">السيرفر المحلي</option>
+                            <option value="external-sql">SQL خارجي لاحقًا</option>
+                        </select>
+                    </label>
+                    <label class="wide-field">
+                        رابط سيرفر الأونلاين للمزامنة
+                        <input type="url" name="onlineSyncUrl" placeholder="مثال: https://gym.example.com أو http://192.168.1.10:8080">
+                    </label>
+                    <button type="submit">حفظ الإعدادات</button>
+                    <p class="form-message" id="settings-message" role="status"></p>
+                </form>
+
+                <!-- Captain Code Section -->
+                <div class="password-box" id="captain-settings-section">
+                    <div class="panel-heading compact-heading">
+                        <div>
+                            <p class="eyebrow">تطبيق الكابتن</p>
+                            <h2>كود دخول الكابتن</h2>
+                        </div>
+                        <p>الكابتن بيستخدم الكود ده لدخول تطبيقه الخاص لمسح QR وعرض المشتركين.</p>
+                    </div>
+                    <form class="password-form" id="captain-code-form">
+                        <label>
+                            كود الكابتن الجديد
+                            <input type="password" name="captainCode" id="captain-code-input" minlength="4" autocomplete="new-password" placeholder="على الأقل 4 أرقام أو حروف" required>
+                        </label>
+                        <label>
+                            تأكيد الكود
+                            <input type="password" name="captainCodeConfirm" id="captain-code-confirm" minlength="4" autocomplete="new-password" placeholder="أعد كتابة الكود" required>
+                        </label>
+                        <button type="submit" id="save-captain-code-btn">حفظ كود الكابتن</button>
+                        <p class="form-message" id="captain-code-message" role="status"></p>
+                    </form>
+                </div>
+
+                <div class="password-box" id="password-settings-section">
+                    <div class="panel-heading compact-heading">
+                        <div>
+                            <p class="eyebrow">أمان المالك</p>
+                            <h2>تغيير باسورد الموقع</h2>
+                        </div>
+                        <p>الباسورد الجديد هيشتغل لدخول الموقع وفتح صفحة المشتركين.</p>
+                    </div>
+                    <form class="password-form" id="password-form">
+                        <label>
+                            الباسورد الحالي
+                            <input type="password" name="currentPassword" minlength="4" autocomplete="current-password" required>
+                        </label>
+                        <label>
+                            الباسورد الجديد
+                            <input type="password" name="newPassword" minlength="4" autocomplete="new-password" required>
+                        </label>
+                        <label>
+                            تأكيد الباسورد الجديد
+                            <input type="password" name="confirmPassword" minlength="4" autocomplete="new-password" required>
+                        </label>
+                        <button type="submit">تغيير الباسورد</button>
+                        <p class="form-message" id="password-message" role="status"></p>
+                    </form>
+                    <div class="biometric-settings">
+                        <div>
+                            <strong>دخول بالبصمة</strong>
+                            <span>اختياري بدل كتابة كلمة السر على نفس الجهاز.</span>
+                        </div>
+                        <div class="sync-actions">
+                            <button class="secondary-action" type="button" id="enable-biometric-login">تفعيل البصمة</button>
+                            <button class="secondary-action danger-action" type="button" id="disable-biometric-login">إلغاء البصمة</button>
+                        </div>
+                        <p class="form-message" id="biometric-settings-message" role="status"></p>
+                    </div>
+                </div>
+
+                <div class="settings-tool-box backup-tool">
+                    <div class="panel-heading compact-heading">
+                        <div>
+                            <p class="eyebrow">نسخة البيانات</p>
+                            <h2>النسخ الاحتياطي والاسترجاع</h2>
+                        </div>
+                    </div>
+
+                    <div class="backup-actions">
+                        <button class="secondary-action" type="button" id="backup-export-btn">تنزيل نسخة JSON</button>
+                        <label class="upload-backup-btn">
+                            استرجاع نسخة
+                            <input id="backup-import-input" type="file" accept="application/json,.json">
+                        </label>
+                    </div>
+                    <p class="form-message" id="backup-message" role="status"></p>
+                </div>
+
+                <div class="settings-tool-box sync-tool">
+                    <div class="panel-heading compact-heading">
+                        <div>
+                            <p class="eyebrow">ربط النسخ</p>
+                            <h2>مزامنة الأونلاين والأوفلاين</h2>
+                        </div>
+                        <p>استخدم رابط سيرفر الأونلاين من الإعدادات لرفع بيانات الجهاز أو سحب آخر نسخة محفوظة.</p>
+                    </div>
+
+                    <div class="sync-actions">
+                        <button class="secondary-action" type="button" id="sync-pending-btn">مزامنة العمليات المؤجلة</button>
+                        <button class="secondary-action" type="button" id="sync-upload-btn">رفع بيانات الجهاز للأونلاين</button>
+                        <button class="secondary-action" type="button" id="sync-download-btn">سحب بيانات الأونلاين للجهاز</button>
+                        <button class="secondary-action" type="button" id="test-sync-connection-btn">فحص الاتصال</button>
+                        <button class="secondary-action" type="button" id="refresh-audit-log-btn">عرض سجل العمليات</button>
+                    </div>
+                    <p class="form-message" id="sync-message" role="status"></p>
+                    <div class="audit-log-list" id="audit-log-list" hidden></div>
+                </div>
+
+                <div class="settings-tool-box whatsapp-tool">
+                    <div class="panel-heading compact-heading">
+                        <div>
+                            <p class="eyebrow">رسائل المتدربين</p>
+                            <h2>رسائل واتساب وإرسال تلقائي</h2>
+                        </div>
+                        <p>اختار مجموعة اللاعبين واكتب الرسالة. الروابط تفتح واتساب يدويًا، والإرسال التلقائي يخرج من السيرفر عند تفعيل WhatsApp Cloud API.</p>
+                    </div>
+
+                    <form class="whatsapp-form" id="whatsapp-form">
+                        <label>
+                            المجموعة
+                            <select name="audience" id="whatsapp-audience">
+                                <option value="all">كل المتدربين</option>
+                                <option value="active">الاشتراكات النشطة</option>
+                                <option value="expiring">قرب انتهاء الاشتراك</option>
+                                <option value="expired">الاشتراكات المنتهية</option>
+                                <option value="inactive">غير نشطين</option>
+                            </select>
+                        </label>
+                        <label class="wide-field">
+                            نص الرسالة
+                            <textarea name="message" id="whatsapp-message-input" rows="4" placeholder="اكتب الرسالة هنا. تقدر تستخدم {name} و {code} و {remaining} و {expiry} و {gym}."></textarea>
+                        </label>
+                        <button type="submit">تجهيز روابط واتساب</button>
+                        <button class="secondary-action" type="button" id="send-whatsapp-broadcast">إرسال تلقائي</button>
+                        <button class="secondary-action" type="button" id="whatsapp-expiry-template">رسالة تجديد جاهزة</button>
+                        <p class="form-message wide-field" id="whatsapp-cloud-status" role="status"></p>
+                        <p class="form-message" id="whatsapp-message-status" role="status"></p>
+                    </form>
+
+                    <div class="whatsapp-summary" id="whatsapp-summary"></div>
+                    <div class="whatsapp-links" id="whatsapp-links"></div>
+
+                    <div class="whatsapp-auto-panel">
+                        <div class="members-toolbar">
+                            <div>
+                                <span>تنبيهات قرب الانتهاء</span>
+                                <strong id="whatsapp-auto-count">0 رسالة</strong>
+                            </div>
+                            <div class="sync-actions">
+                                <button class="secondary-action" type="button" id="refresh-whatsapp-reminders">تحديث التنبيهات</button>
+                                <button class="secondary-action" type="button" id="send-whatsapp-reminders">إرسال تنبيهات اليوم تلقائيًا</button>
+                                <button class="secondary-action" type="button" id="open-next-whatsapp-reminder">فتح أول رسالة</button>
+                                <button class="secondary-action" type="button" id="open-all-whatsapp-reminders">فتح رسائل اليوم</button>
+                            </div>
+                        </div>
+                        <p class="form-message" id="whatsapp-auto-status" role="status"></p>
+                        <div class="whatsapp-auto-reminders" id="whatsapp-auto-reminders"></div>
+                    </div>
+                </div>
+
+                <div class="settings-tool-box finance-tool">
+                    <div class="panel-heading compact-heading">
+                        <div>
+                            <p class="eyebrow">خزنة مستقلة</p>
+                            <h2>الخزنة الخاصة</h2>
+                        </div>
+                        <p>صفحة برايفت ولها باسورد منفصل تمامًا عن باسورد دخول البرنامج.</p>
+                    </div>
+
+                    <div class="finance-vault-status" id="finance-vault-status">
+                        <span>حالة الخزنة</span>
+                        <strong>مقفولة بباسورد مستقل</strong>
+                    </div>
+
+                    <form class="tool-lock-form" id="finance-lock-form">
+                        <label>
+                            باسورد فتح الخزنة
+                            <input type="password" id="finance-password" minlength="4" autocomplete="new-password" placeholder="اكتب باسورد الخزنة" required>
+                        </label>
+                        <div class="finance-manager-setup" id="finance-manager-setup">
+                            <label>
+                                اسم مدير الخزنة
+                                <input type="text" id="finance-manager-name" autocomplete="name" placeholder="مثال: صاحب الجيم">
+                            </label>
+                            <label>
+                                باسورد مدير الخزنة
+                                <input type="password" id="finance-manager-password" minlength="4" autocomplete="new-password" placeholder="باسورد الإدارة">
+                            </label>
+                            <label>
+                                تأكيد باسورد المدير
+                                <input type="password" id="finance-manager-confirm-password" minlength="4" autocomplete="new-password" placeholder="أعد كتابة الباسورد">
+                            </label>
+                        </div>
+                        <button type="submit" id="finance-unlock-btn">فتح الخزنة</button>
+                        <p class="form-message" id="finance-lock-message" role="status"></p>
+                    </form>
+
+                    <div class="tool-private-area" id="finance-private-area" hidden>
+                        <div class="finance-vault-actions">
+                            <button class="secondary-action danger-action" type="button" id="finance-lock-btn">قفل الخزنة</button>
+                            <button class="secondary-action danger-action" type="button" id="reset-finance-btn" title="تصفير الخزنة وتصفير رصيد الوارد والصادر للصفر">🔄 تصفير الخزنة للصفر</button>
+                        </div>
+                        <p class="form-message" id="finance-reset-message" role="status"></p>
+
+                        <p class="finance-user-note" id="finance-user-note" hidden>الدخول الحالي مستخدم خزنة، وإدارة الصلاحيات مع مدير الخزنة فقط.</p>
+
+                        <div class="finance-manager-panel" id="finance-manager-panel">
+                            <form class="finance-password-form" id="finance-change-password-form">
+                                <div class="panel-heading compact-heading">
+                                    <div>
+                                        <p class="eyebrow">أمان الخزنة</p>
+                                        <h2>تغيير باسورد الخزنة</h2>
+                                    </div>
+                                    <p>تغيير الباسورد متاح لمدير الخزنة فقط.</p>
+                                </div>
+                                <label>
+                                    باسورد مدير الخزنة
+                                    <input type="password" name="currentFinanceManagerPassword" minlength="4" autocomplete="current-password" required>
+                                </label>
+                                <label>
+                                    باسورد فتح الخزنة الجديد
+                                    <input type="password" name="newFinancePassword" minlength="4" autocomplete="new-password" required>
+                                </label>
+                                <label>
+                                    تأكيد الباسورد الجديد
+                                    <input type="password" name="confirmFinancePassword" minlength="4" autocomplete="new-password" required>
+                                </label>
+                                <button type="submit">تغيير باسورد الخزنة</button>
+                                <p class="form-message" id="finance-password-message" role="status"></p>
+                            </form>
+
+                            <form class="finance-user-form" id="finance-user-form">
+                                <div class="panel-heading compact-heading">
+                                    <div>
+                                        <p class="eyebrow">مستخدمي الخزنة</p>
+                                        <h2>إضافة مستخدم للخزنة</h2>
+                                    </div>
+                                </div>
+                                <label>
+                                    اسم المستخدم
+                                    <input type="text" name="financeUserName" autocomplete="name" placeholder="مثال: الكابتن أحمد" required>
+                                </label>
+                                <label>
+                                    باسورد المستخدم
+                                    <input type="password" name="financeUserPassword" minlength="4" autocomplete="new-password" required>
+                                </label>
+                                <label>
+                                    تأكيد الباسورد
+                                    <input type="password" name="confirmFinanceUserPassword" minlength="4" autocomplete="new-password" required>
+                                </label>
+                                <button type="submit">إضافة مستخدم</button>
+                                <p class="form-message" id="finance-user-message" role="status"></p>
+                            </form>
+
+                            <div class="finance-users-panel">
+                                <div class="members-toolbar">
+                                    <div>
+                                        <span>صلاحيات استخدام الخزنة</span>
+                                        <strong id="finance-users-count">0 مستخدم</strong>
+                                    </div>
+                                </div>
+                                <div class="tool-table-wrap">
+                                    <table class="compact-table">
+                                        <thead>
+                                            <tr>
+                                                <th>المستخدم</th>
+                                                <th>تاريخ الإضافة</th>
+                                                <th>إجراء</th>
+                                            </tr>
+                                        </thead>
+                                        <tbody id="finance-users-table">
+                                            <tr>
+                                                <td colspan="3" class="empty-cell">لسه مفيش مستخدمين للخزنة.</td>
+                                            </tr>
+                                        </tbody>
+                                    </table>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="finance-summary-grid">
+                            <article>
+                                <span>إجمالي الوارد</span>
+                                <strong id="finance-income-total">0 ج</strong>
+                            </article>
+                            <article>
+                                <span>إجمالي المصروف</span>
+                                <strong id="finance-expense-total">0 ج</strong>
+                            </article>
+                            <article>
+                                <span>الصافي</span>
+                                <strong id="finance-net-total">0 ج</strong>
+                            </article>
+                        </div>
+
+                        <form class="finance-form" id="finance-form">
+                            <label>
+                                نوع الحركة
+                                <select name="type" required>
+                                    <option value="income">وارد / إيراد</option>
+                                    <option value="expense">مصروف</option>
+                                </select>
+                            </label>
+                            <label>
+                                المبلغ
+                                <input type="number" name="amount" min="0" step="1" placeholder="مثال: 500" required>
+                            </label>
+                            <label>
+                                التاريخ
+                                <input type="date" name="date" id="finance-date" required>
+                            </label>
+                            <label>
+                                البيان
+                                <input type="text" name="note" placeholder="مثال: اشتراك أحمد / صيانة جهاز" required>
+                            </label>
+                            <button type="submit">إضافة حركة</button>
+                            <p class="form-message" id="finance-message" role="status"></p>
+                        </form>
+
+                        <div class="tool-table-wrap">
+                            <table class="compact-table">
+                                <thead>
+                                    <tr>
+                                        <th>التاريخ</th>
+                                        <th>النوع</th>
+                                        <th>البيان</th>
+                                        <th>المبلغ</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="finance-table">
+                                    <tr>
+                                        <td colspan="4" class="empty-cell">لسه مفيش حركات مالية.</td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="settings-tool-box renewal-tool">
+                    <div class="panel-heading compact-heading">
+                        <div>
+                            <p class="eyebrow">طلبات الموبايل</p>
+                            <h2>طلبات تجديد الاشتراك</h2>
+                        </div>
+                        <p>الطلبات القادمة من كارت اللاعب تظهر هنا بمجرد اتصال التطبيق بالسيرفر.</p>
+                    </div>
+
+                    <div class="members-toolbar">
+                        <div>
+                            <span>طلبات التجديد</span>
+                            <strong id="renewal-requests-count">0 طلب</strong>
+                        </div>
+                        <button class="secondary-action" type="button" id="refresh-renewal-requests">تحديث الطلبات</button>
+                    </div>
+
+                    <div class="tool-table-wrap">
+                        <table class="compact-table renewal-table">
+                            <thead>
+                                <tr>
+                                    <th>التاريخ</th>
+                                    <th>اللاعب</th>
+                                    <th>الكود</th>
+                                    <th>الهاتف</th>
+                                    <th>المتبقي</th>
+                                    <th>إجراء</th>
+                                </tr>
+                            </thead>
+                            <tbody id="renewal-requests-table">
+                                <tr>
+                                    <td colspan="6" class="empty-cell">لسه مفيش طلبات تجديد.</td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+
+                <div class="settings-tool-box progress-tool">
+                    <div class="panel-heading compact-heading">
+                        <div>
+                            <p class="eyebrow">متابعة التدريب</p>
+                            <h2>مقارنة اللاعبين شهريًا</h2>
+                        </div>
+                        <p>تابع وزن وطول كل لاعب والتزامه في الشهر الحالي مقارنة بالشهر السابق.</p>
+                    </div>
+
+                    <form class="progress-form" id="progress-form">
+                        <label>
+                            اللاعب
+                            <select name="memberId" id="progress-member-select" required>
+                                <option value="">اختار لاعب</option>
+                            </select>
+                        </label>
+                        <label>
+                            الشهر
+                            <input type="month" name="month" id="progress-month" required>
+                        </label>
+                        <label>
+                            الوزن الحالي
+                            <input type="number" name="weight" id="progress-weight" min="0" step="0.1" placeholder="كجم">
+                        </label>
+                        <label>
+                            الطول الحالي
+                            <input type="number" name="height" id="progress-height" min="0" step="0.1" placeholder="سم">
+                        </label>
+                        <label class="wide-field">
+                            ملاحظة التمرين
+                            <input type="text" name="note" placeholder="مثال: ملتزم بالكارديو / يحتاج متابعة تغذية">
+                        </label>
+                        <button type="submit">حفظ قياس الشهر</button>
+                        <p class="form-message" id="progress-message" role="status"></p>
+                    </form>
+
+                    <div class="progress-summary-grid" id="progress-summary-grid">
+                        <article class="empty-progress-card">سجل قياسات اللاعبين وسيظهر التحليل الشهري هنا.</article>
+                    </div>
+                </div>
+            </section>
+        </section>
+    </main>
+
+    <div class="access-modal" id="members-lock-modal" hidden role="dialog" aria-modal="true" aria-labelledby="members-lock-title">
+        <form class="access-card" id="members-lock-form">
+            <p class="eyebrow">حماية بيانات المشتركين</p>
+            <h2 id="members-lock-title">أدخل باسورد المالك</h2>
+            <p>صفحة المشتركين تحتوي على بيانات خاصة ولا يتم فتحها إلا بعد التأكيد.</p>
+            <label>
+                باسورد المالك
+                <input type="password" id="members-lock-password" minlength="4" autocomplete="current-password" required>
+            </label>
+            <div class="access-actions">
+                <button type="submit">فتح المشتركين</button>
+                <button class="secondary-action" type="button" id="members-lock-cancel">إلغاء</button>
+            </div>
+            <p class="form-message" id="members-lock-message" role="status"></p>
+        </form>
+    </div>
+
+    <div class="access-modal" id="edit-member-modal" hidden role="dialog" aria-modal="true" aria-labelledby="edit-member-title">
+        <form class="access-card member-action-card" id="edit-member-form">
+            <p class="eyebrow">إدارة مشترك</p>
+            <h2 id="edit-member-title">تعديل بيانات المشترك</h2>
+            <input type="hidden" name="memberId" id="edit-member-id">
+            <label>
+                كود المشترك
+                <input type="text" name="code" required>
+            </label>
+            <label>
+                اسم المشترك
+                <input type="text" name="name" required>
+            </label>
+            <label>
+                رقم الهاتف
+                <input type="tel" name="phone" required>
+            </label>
+            <div class="modal-form-grid">
+                <label>
+                    الوزن
+                    <input type="number" name="weight" min="0" step="0.1">
+                </label>
+                <label>
+                    الطول
+                    <input type="number" name="height" min="0" step="0.1">
+                </label>
+                <label>
+                    الاشتراك
+                    <select name="plan" id="edit-member-plan" required>
+                        <option value="نص شهر">نص شهر</option>
+                        <option value="شهر">شهر</option>
+                        <option value="10 أيام">10 أيام</option>
+                    </select>
+                </label>
+                <label>
+                    السعر
+                    <input type="number" name="price" id="edit-member-price" min="0" step="1" required>
+                </label>
+                <label>
+                    المتبقي
+                    <input type="number" name="remainingDays" id="edit-member-remaining-days" min="0" step="1" required>
+                </label>
+            </div>
+            <div class="edit-member-photo-section">
+                <div class="edit-member-photo-preview" id="edit-member-photo-preview">
+                    <span id="edit-member-photo-placeholder">لا توجد صورة</span>
+                    <img id="edit-member-photo-img" alt="صورة المشترك" hidden>
+                </div>
+                <div class="edit-member-photo-actions">
+                    <label class="upload-photo-btn" id="edit-member-upload-label">
+                        📷 رفع صورة
+                        <input id="edit-member-photo-upload" type="file" accept="image/*">
+                    </label>
+                    <button class="secondary-action" type="button" id="edit-member-photo-clear" hidden>🗑 مسح الصورة</button>
+                </div>
+                <input type="hidden" name="photo" id="edit-member-photo-data">
+            </div>
+            <div class="access-actions">
+                <button type="submit">حفظ التعديل</button>
+                <button class="secondary-action" type="button" id="edit-member-cancel">إلغاء</button>
+            </div>
+            <p class="form-message" id="edit-member-message" role="status"></p>
+        </form>
+    </div>
+
+    <div class="access-modal" id="renew-member-modal" hidden role="dialog" aria-modal="true" aria-labelledby="renew-member-title">
+        <form class="access-card member-action-card" id="renew-member-form">
+            <p class="eyebrow">تجديد اشتراك</p>
+            <h2 id="renew-member-title">تجديد الاشتراك</h2>
+            <strong class="modal-member-name" id="renew-member-name"></strong>
+            <input type="hidden" name="memberId" id="renew-member-id">
+            <input type="hidden" name="requestId" id="renew-request-id">
+            <div class="modal-form-grid">
+                <label>
+                    نوع الاشتراك
+                    <select name="plan" id="renew-plan-select" required>
+                        <option value="نص شهر">نص شهر</option>
+                        <option value="شهر">شهر</option>
+                        <option value="10 أيام">10 أيام</option>
+                    </select>
+                </label>
+                <label>
+                    الأيام
+                    <input type="number" name="days" id="renew-days-input" min="1" step="1" required>
+                </label>
+                <label>
+                    المبلغ
+                    <input type="number" name="price" id="renew-price-input" min="0" step="1" required>
+                </label>
+            </div>
+            <label class="checkbox-field">
+                <input type="checkbox" name="addFinance" checked>
+                تسجيل المبلغ في الخزنة
+            </label>
+            <div class="access-actions">
+                <button type="submit">تجديد الآن</button>
+                <button class="secondary-action" type="button" id="renew-member-cancel">إلغاء</button>
+            </div>
+            <p class="form-message" id="renew-member-message" role="status"></p>
+        </form>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/jsqr@1.4.0/dist/jsQR.js"></script>
+    <script src="script.js"></script>
+</body>
+</html>

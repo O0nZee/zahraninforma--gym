@@ -1,0 +1,626 @@
+/* =============================================================
+   Captain App - Mobile Dark Glassmorphic Theme
+   Zahran Informa Gym - captain-app.css
+   ============================================================= */
+
+:root {
+    --bg:          #0b0f19;
+    --card:        rgba(20, 26, 38, 0.88);
+    --border:      rgba(255, 255, 255, 0.1);
+    --red:         #ef3138;
+    --red-dim:     rgba(239, 49, 56, 0.25);
+    --green:       #10b981;
+    --green-dim:   rgba(16, 185, 129, 0.18);
+    --yellow:      #f59e0b;
+    --yellow-dim:  rgba(245, 158, 11, 0.18);
+    --blue:        #3b82f6;
+    --text:        #f3f4f6;
+    --muted:       #9ca3af;
+    --dim:         #6b7280;
+    --radius:      16px;
+    --radius-sm:   10px;
+    --radius-full: 9999px;
+    --shadow:      0 20px 40px rgba(0, 0, 0, 0.5);
+    --font:        'Cairo', system-ui, sans-serif;
+    --tr:          all 0.25s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+*, *::before, *::after {
+    box-sizing: border-box;
+    margin: 0;
+    padding: 0;
+}
+
+html, body {
+    height: 100%;
+    background: var(--bg);
+    color: var(--text);
+    font-family: var(--font);
+    direction: rtl;
+    -webkit-font-smoothing: antialiased;
+    overscroll-behavior: none;
+}
+
+/* ── App Shell ────────────────────────────────────────────── */
+.captain-app {
+    min-height: 100vh;
+    min-height: 100dvh;
+    display: flex;
+    flex-direction: column;
+    background:
+        radial-gradient(circle at 50% 0%, rgba(239,49,56,.12), transparent 420px),
+        radial-gradient(circle at 90% 80%, rgba(16,185,129,.06), transparent 300px),
+        #0b0f19;
+    background-attachment: fixed;
+}
+
+/* ── Screens ──────────────────────────────────────────────── */
+.cap-screen {
+    display: none;
+    flex: 1;
+    flex-direction: column;
+}
+
+.cap-screen.active {
+    display: flex;
+}
+
+/* ── Login Card ───────────────────────────────────────────── */
+#login-screen {
+    align-items: center;
+    justify-content: center;
+    padding: 24px 20px;
+    min-height: 100vh;
+    min-height: 100dvh;
+}
+
+.cap-login-card {
+    width: min(420px, 100%);
+    background: var(--card);
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    padding: 40px 32px;
+    box-shadow: var(--shadow);
+    backdrop-filter: blur(20px);
+    -webkit-backdrop-filter: blur(20px);
+    text-align: center;
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+}
+
+.cap-logo {
+    width: 72px;
+    height: 72px;
+    object-fit: contain;
+    margin: 0 auto 8px;
+    border-radius: 16px;
+}
+
+.cap-login-card h1 {
+    font-size: 1.6rem;
+    font-weight: 900;
+    color: var(--text);
+    margin-bottom: 2px;
+}
+
+.cap-sub {
+    font-size: 0.88rem;
+    color: var(--muted);
+    margin-bottom: 20px;
+}
+
+.cap-input-group {
+    margin-bottom: 12px;
+}
+
+.cap-input-group input {
+    width: 100%;
+    background: rgba(10, 14, 22, 0.7);
+    border: 1px solid var(--border);
+    border-radius: var(--radius-sm);
+    padding: 14px 16px;
+    color: var(--text);
+    font-family: var(--font);
+    font-size: 1rem;
+    outline: none;
+    transition: var(--tr);
+    text-align: center;
+    letter-spacing: 3px;
+}
+
+.cap-input-group input:focus {
+    border-color: var(--red);
+    box-shadow: 0 0 0 3px var(--red-dim);
+}
+
+/* ── Buttons ──────────────────────────────────────────────── */
+.cap-btn {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+    background: linear-gradient(135deg, var(--red), #c0262c);
+    color: #fff;
+    border: none;
+    border-radius: var(--radius-sm);
+    padding: 14px 20px;
+    font-size: 1rem;
+    font-weight: 800;
+    font-family: var(--font);
+    cursor: pointer;
+    transition: var(--tr);
+    width: 100%;
+    box-shadow: 0 8px 24px rgba(239, 49, 56, 0.3);
+}
+
+.cap-btn:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 12px 32px rgba(239, 49, 56, 0.45);
+}
+
+.cap-btn:disabled {
+    opacity: 0.6;
+    cursor: not-allowed;
+    transform: none;
+}
+
+.cap-btn-danger {
+    background: linear-gradient(135deg, #dc2626, #991b1b);
+    box-shadow: 0 6px 20px rgba(220, 38, 38, 0.3);
+}
+
+.cap-btn-danger:hover {
+    box-shadow: 0 10px 28px rgba(220, 38, 38, 0.45);
+}
+
+.cap-btn-outline {
+    background: transparent;
+    border: 1px solid var(--border);
+    color: var(--text);
+    box-shadow: none;
+}
+
+.cap-btn-outline:hover {
+    background: rgba(255, 255, 255, 0.07);
+    box-shadow: none;
+    border-color: rgba(255, 255, 255, 0.25);
+}
+
+.cap-btn-sm {
+    width: auto;
+    padding: 8px 16px;
+    font-size: 0.88rem;
+}
+
+/* ── Feedback ─────────────────────────────────────────────── */
+.cap-feedback {
+    font-size: 0.88rem;
+    font-weight: 700;
+    padding: 12px 16px;
+    border-radius: var(--radius-sm);
+    line-height: 1.5;
+    margin-top: 10px;
+}
+
+.cap-feedback.success {
+    background: var(--green-dim);
+    border: 1px solid rgba(16, 185, 129, 0.4);
+    color: #6ee7b7;
+}
+
+.cap-feedback.error {
+    background: rgba(239, 68, 68, 0.15);
+    border: 1px solid rgba(239, 68, 68, 0.4);
+    color: #fca5a5;
+}
+
+/* ── Topbar ───────────────────────────────────────────────── */
+.cap-topbar {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 14px 20px;
+    background: rgba(13, 18, 28, 0.9);
+    border-bottom: 1px solid var(--border);
+    backdrop-filter: blur(16px);
+    -webkit-backdrop-filter: blur(16px);
+    position: sticky;
+    top: 0;
+    z-index: 50;
+}
+
+.cap-topbar-brand {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    font-weight: 800;
+    font-size: 1.05rem;
+}
+
+.cap-top-logo {
+    width: 36px;
+    height: 36px;
+    object-fit: contain;
+    border-radius: 8px;
+}
+
+.cap-logout-btn {
+    background: rgba(239, 68, 68, 0.12);
+    border: 1px solid rgba(239, 68, 68, 0.3);
+    color: #fca5a5;
+    padding: 7px 14px;
+    border-radius: var(--radius-sm);
+    cursor: pointer;
+    font-family: var(--font);
+    font-weight: 700;
+    font-size: 0.85rem;
+    transition: var(--tr);
+}
+
+.cap-logout-btn:hover {
+    background: rgba(239, 68, 68, 0.25);
+    color: #fff;
+}
+
+/* ── Tabs ─────────────────────────────────────────────────── */
+.cap-tabs {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    background: rgba(10, 14, 22, 0.6);
+    border-bottom: 1px solid var(--border);
+}
+
+.cap-tab {
+    background: transparent;
+    border: none;
+    color: var(--muted);
+    font-family: var(--font);
+    font-size: 0.92rem;
+    font-weight: 700;
+    padding: 14px;
+    cursor: pointer;
+    transition: var(--tr);
+    border-bottom: 3px solid transparent;
+}
+
+.cap-tab.active {
+    color: var(--red);
+    border-bottom-color: var(--red);
+    background: rgba(239, 49, 56, 0.06);
+}
+
+/* ── Tab Content ──────────────────────────────────────────── */
+.cap-tab-content {
+    display: none;
+    flex-direction: column;
+    flex: 1;
+    padding: 20px;
+    gap: 16px;
+    overflow-y: auto;
+}
+
+.cap-tab-content.active {
+    display: flex;
+}
+
+/* ── QR Scan Section ──────────────────────────────────────── */
+.cap-scan-wrap {
+    display: flex;
+    flex-direction: column;
+    gap: 14px;
+}
+
+.cap-video-wrap {
+    position: relative;
+    border-radius: var(--radius);
+    overflow: hidden;
+    background: #000;
+    aspect-ratio: 4 / 3;
+    max-height: 320px;
+}
+
+.cap-video-wrap video {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    display: block;
+}
+
+.cap-scan-overlay {
+    position: absolute;
+    inset: 0;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 14px;
+    background: rgba(0, 0, 0, 0.25);
+    pointer-events: none;
+}
+
+.cap-scan-frame {
+    width: 180px;
+    height: 180px;
+    border: 3px solid var(--red);
+    border-radius: 16px;
+    box-shadow: 0 0 0 2000px rgba(0, 0, 0, 0.35), 0 0 24px var(--red-dim);
+    animation: pulse-frame 2s ease-in-out infinite;
+}
+
+@keyframes pulse-frame {
+    0%, 100% { box-shadow: 0 0 0 2000px rgba(0, 0, 0, 0.35), 0 0 18px var(--red-dim); }
+    50% { box-shadow: 0 0 0 2000px rgba(0, 0, 0, 0.35), 0 0 36px rgba(239, 49, 56, 0.5); }
+}
+
+.cap-scan-hint {
+    color: rgba(255, 255, 255, 0.85);
+    font-size: 0.82rem;
+    font-weight: 700;
+    background: rgba(0, 0, 0, 0.5);
+    padding: 6px 14px;
+    border-radius: var(--radius-full);
+    backdrop-filter: blur(8px);
+}
+
+.cap-scan-actions {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+}
+
+.cap-msg {
+    font-size: 0.9rem;
+    font-weight: 700;
+    color: var(--muted);
+    text-align: center;
+    min-height: 22px;
+}
+
+/* ── Member Card ──────────────────────────────────────────── */
+.cap-member-card {
+    background: var(--card);
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    overflow: hidden;
+    box-shadow: var(--shadow);
+    backdrop-filter: blur(16px);
+    -webkit-backdrop-filter: blur(16px);
+    display: flex;
+    flex-direction: column;
+    gap: 0;
+}
+
+.cap-member-header {
+    display: flex;
+    align-items: center;
+    gap: 16px;
+    padding: 20px;
+    background: rgba(239, 49, 56, 0.06);
+    border-bottom: 1px solid var(--border);
+}
+
+.cap-member-avatar {
+    width: 56px;
+    height: 56px;
+    border-radius: 50%;
+    background: rgba(239, 49, 56, 0.12);
+    border: 2px solid var(--red);
+    display: grid;
+    place-items: center;
+    font-size: 1.8rem;
+    flex-shrink: 0;
+}
+
+.cap-member-header h2 {
+    font-size: 1.25rem;
+    font-weight: 900;
+    margin-bottom: 6px;
+}
+
+.cap-code-tag {
+    background: rgba(255, 255, 255, 0.08);
+    border: 1px solid var(--border);
+    padding: 2px 10px;
+    border-radius: var(--radius-full);
+    font-size: 0.8rem;
+    font-weight: 700;
+    margin-left: 8px;
+}
+
+.cap-status-badge {
+    padding: 3px 10px;
+    border-radius: var(--radius-full);
+    font-size: 0.78rem;
+    font-weight: 800;
+}
+
+.cap-status-badge.active {
+    background: var(--green-dim);
+    color: #6ee7b7;
+    border: 1px solid rgba(16, 185, 129, 0.4);
+}
+
+.cap-status-badge.expiring {
+    background: var(--yellow-dim);
+    color: #fcd34d;
+    border: 1px solid rgba(245, 158, 11, 0.4);
+}
+
+.cap-status-badge.expired {
+    background: rgba(239, 68, 68, 0.18);
+    color: #fca5a5;
+    border: 1px solid rgba(239, 68, 68, 0.4);
+}
+
+.cap-member-details {
+    padding: 16px 20px;
+    display: flex;
+    flex-direction: column;
+    gap: 0;
+}
+
+.cap-detail-row {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 10px 0;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+    font-size: 0.9rem;
+}
+
+.cap-detail-row:last-child {
+    border-bottom: none;
+}
+
+.cap-detail-row span {
+    color: var(--muted);
+}
+
+.cap-detail-row strong {
+    color: var(--text);
+    font-weight: 700;
+}
+
+/* ── Check-in Banner ──────────────────────────────────────── */
+.cap-checkin-banner {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 10px;
+    padding: 16px 20px;
+    font-size: 1rem;
+    font-weight: 800;
+    border-top: 1px solid var(--border);
+    background: rgba(16, 185, 129, 0.1);
+}
+
+.cap-checkin-banner.checked-in {
+    background: var(--green-dim);
+    color: #6ee7b7;
+    border-top-color: rgba(16, 185, 129, 0.3);
+}
+
+.cap-checkin-banner.already-in {
+    background: rgba(59, 130, 246, 0.12);
+    color: #93c5fd;
+    border-top-color: rgba(59, 130, 246, 0.3);
+}
+
+.cap-checkin-banner.expired {
+    background: rgba(239, 68, 68, 0.12);
+    color: #fca5a5;
+    border-top-color: rgba(239, 68, 68, 0.3);
+}
+
+.cap-scan-again {
+    margin: 12px 20px 20px;
+}
+
+/* ── Today Tab ────────────────────────────────────────────── */
+.cap-today-header {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    flex-wrap: wrap;
+}
+
+.cap-today-header h2 {
+    font-size: 1.1rem;
+    font-weight: 800;
+    flex: 1;
+}
+
+.cap-today-count {
+    background: var(--green-dim);
+    color: #6ee7b7;
+    border: 1px solid rgba(16, 185, 129, 0.4);
+    padding: 4px 14px;
+    border-radius: var(--radius-full);
+    font-size: 0.82rem;
+    font-weight: 800;
+}
+
+.cap-today-list {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+}
+
+.cap-today-item {
+    display: flex;
+    align-items: center;
+    gap: 14px;
+    background: var(--card);
+    border: 1px solid var(--border);
+    border-radius: var(--radius-sm);
+    padding: 14px 16px;
+    backdrop-filter: blur(12px);
+    -webkit-backdrop-filter: blur(12px);
+}
+
+.cap-today-avatar {
+    width: 44px;
+    height: 44px;
+    border-radius: 50%;
+    background: rgba(239, 49, 56, 0.1);
+    border: 1px solid var(--border);
+    display: grid;
+    place-items: center;
+    font-size: 1.4rem;
+    flex-shrink: 0;
+}
+
+.cap-today-info {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    gap: 3px;
+}
+
+.cap-today-info strong {
+    font-size: 0.95rem;
+    font-weight: 800;
+}
+
+.cap-today-info small {
+    font-size: 0.78rem;
+    color: var(--muted);
+}
+
+.cap-today-time {
+    font-size: 0.82rem;
+    color: var(--green);
+    font-weight: 700;
+    background: var(--green-dim);
+    padding: 3px 10px;
+    border-radius: var(--radius-full);
+    white-space: nowrap;
+}
+
+.cap-empty {
+    color: var(--dim);
+    text-align: center;
+    padding: 32px 0;
+    font-size: 0.92rem;
+}
+
+/* ── Responsive ───────────────────────────────────────────── */
+@media (min-width: 480px) {
+    .cap-login-card {
+        padding: 48px 40px;
+    }
+    .cap-tab-content {
+        padding: 24px;
+    }
+}
+
+@media (max-width: 360px) {
+    .cap-member-header {
+        flex-direction: column;
+        text-align: center;
+    }
+    .cap-member-header h2 {
+        font-size: 1.1rem;
+    }
+}

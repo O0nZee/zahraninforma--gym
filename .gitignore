@@ -1,0 +1,13 @@
+node_modules/
+admin-apk/
+desktop-app/
+*.apk
+.env
+data/
+.gradle-home/
+.apk-check/
+MemberApp/
+برنامج-المستخدمين-الجديد/
+المستخدمين/
+المستخدمين 1/
+database/

@@ -1,0 +1,269 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="Zahran Informa - تطبيق المشتركين">
+    <meta name="theme-color" content="#0b0f19">
+    <title>تطبيق المشتركين | Zahran Informa</title>
+    <!-- Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;600;700;800;900&family=Outfit:wght@500;700;900&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="member-app.css">
+</head>
+<body>
+
+    <!-- App Container -->
+    <div class="member-app-container">
+
+        <!-- Header Bar -->
+        <header class="app-header" id="app-header">
+            <div class="brand-box">
+                <img src="assets/zahran-informa-logo.png" alt="Zahran Informa" class="brand-logo" id="header-logo">
+                <div class="brand-info">
+                    <h1 id="gym-title">Zahran Informa</h1>
+                    <span class="sub-title">بوابة المتدربين</span>
+                </div>
+            </div>
+            <div class="user-header-info" id="user-header-info" hidden>
+                <div class="user-pill">
+                    <span class="user-avatar" id="header-avatar">👤</span>
+                    <div class="user-text">
+                        <strong id="header-member-name">أحمد محمد</strong>
+                        <small id="header-member-code">ZI-2026</small>
+                    </div>
+                </div>
+                <button class="icon-btn logout-btn" id="member-logout-btn" title="تسجيل الخروج">
+                    🚪 <span>خروج</span>
+                </button>
+            </div>
+        </header>
+
+        <!-- Login Screen -->
+        <main class="view-screen login-screen active" id="login-screen">
+            <div class="glass-card login-card">
+                <div class="card-badge">تسجيل الدخول للمشتركين</div>
+                <h2 class="welcome-heading">مرحباً بك يا بطل! 💪</h2>
+                <p class="login-subtext">أدخل كودك ورقم موبايلك المسجل لدى الجيم للدخول إلى حسابك.</p>
+
+                <form id="member-login-form" class="login-form">
+                    <div class="input-group">
+                        <label for="input-member-code">كود المشترك</label>
+                        <input type="text" id="input-member-code" placeholder="مثال: ZI-2026" required autocomplete="username">
+                    </div>
+
+                    <div class="input-group">
+                        <label for="input-member-phone">رقم الهاتف</label>
+                        <input type="tel" id="input-member-phone" placeholder="مثال: 01xxxxxxxxx" required autocomplete="tel">
+                    </div>
+
+                    <button type="submit" class="primary-btn glow-btn" id="login-submit-btn">
+                        <span>دخول الحساب</span>
+                        <div class="btn-shine"></div>
+                    </button>
+                </form>
+
+                <div class="form-feedback" id="login-feedback-msg" role="status" hidden></div>
+
+                <div class="approval-note-box">
+                    <span class="note-icon">🔒</span>
+                    <p>تنبيـه: لا يمكنك استخدام التطبيق إلا إذا كنت مسجلاً لدى كابتن الجيم وحاصلاً على موافقة الكابتن لتفعيل حسابك.</p>
+                </div>
+            </div>
+        </main>
+
+        <!-- Member Dashboard Screen -->
+        <main class="view-screen dashboard-screen" id="dashboard-screen" hidden>
+            
+            <!-- Welcome Hero -->
+            <section class="welcome-hero glass-card">
+                <div class="hero-content">
+                    <div class="hero-avatar-wrap">
+                        <img id="dash-member-photo" src="" alt="صورة المشترك" hidden>
+                        <span id="dash-member-avatar-placeholder">🏋️‍♂️</span>
+                    </div>
+                    <div class="hero-details">
+                        <span class="hero-greeting">أهلاً بك مجدداً ،</span>
+                        <h2 id="dash-member-name">اسم المشترك</h2>
+                        <div class="hero-badges">
+                            <span class="code-tag" id="dash-member-code">ZI-0000</span>
+                            <span class="status-badge" id="dash-sub-status">نشط</span>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Grid Layout -->
+            <div class="dashboard-grid">
+
+                <!-- Subscription Card -->
+                <section class="glass-card sub-card">
+                    <div class="card-header">
+                        <h3>📋 تفاصيل الاشتراك</h3>
+                        <span class="plan-chip" id="dash-plan-name">شهر</span>
+                    </div>
+
+                    <div class="days-counter-ring">
+                        <div class="ring-content">
+                            <strong id="dash-remaining-days">30</strong>
+                            <small>يوم متبقي</small>
+                        </div>
+                    </div>
+
+                    <div class="sub-details-list">
+                        <div class="detail-row">
+                            <span>تاريخ البداية:</span>
+                            <strong id="dash-start-date">-</strong>
+                        </div>
+                        <div class="detail-row">
+                            <span>تاريخ الانتهاء:</span>
+                            <strong id="dash-end-date">-</strong>
+                        </div>
+                        <div class="detail-row">
+                            <span>قيمة الاشتراك:</span>
+                            <strong id="dash-plan-price">0 ج.م</strong>
+                        </div>
+                    </div>
+
+                    <button class="action-btn renew-btn glow-btn" id="request-renew-btn">
+                        ⚡ طلب تجديد الاشتراك الآن
+                    </button>
+                    <div class="feedback-toast" id="renew-toast-msg" hidden></div>
+                </section>
+
+                <!-- Body Measurements & Calculator Card -->
+                <section class="glass-card calculator-card">
+                    <div class="card-header">
+                        <h3>⚖️ حاسبة وتتبع الوزن والطول</h3>
+                        <small class="muted-text">حساب الـ BMI ومتابعة قياساتك</small>
+                    </div>
+
+                    <form id="measurement-form" class="calc-form">
+                        <div class="calc-inputs-grid">
+                            <div class="input-group">
+                                <label for="calc-weight">الوزن الحالي (كجم)</label>
+                                <input type="number" id="calc-weight" step="0.1" min="20" max="300" placeholder="مثال: 80" required>
+                            </div>
+                            <div class="input-group">
+                                <label for="calc-height">الطول (سم)</label>
+                                <input type="number" id="calc-height" step="0.1" min="100" max="250" placeholder="مثال: 175" required>
+                            </div>
+                        </div>
+
+                        <button type="submit" class="secondary-btn save-measure-btn" id="save-measure-btn">
+                            💾 احتساب وحفظ القياس
+                        </button>
+                    </form>
+
+                    <!-- Calculator Results -->
+                    <div class="calc-results-box" id="calc-results-box">
+                        <div class="result-metric bmi-metric">
+                            <span>مؤشر كتلة الجسم (BMI)</span>
+                            <strong id="res-bmi-val">--</strong>
+                            <span class="bmi-badge" id="res-bmi-status">--</span>
+                        </div>
+
+                        <div class="result-metric ideal-metric">
+                            <span>الوزن المثالي المتوقع</span>
+                            <strong id="res-ideal-weight">-- كجم</strong>
+                            <small>مدى صحي مناسب لطولك</small>
+                        </div>
+
+                        <div class="result-metric calories-metric">
+                            <span>السعرات الحرارية التقديرية</span>
+                            <strong id="res-calories">-- كالوري</strong>
+                            <small>للحفاظ على الوزن الحالي</small>
+                        </div>
+                    </div>
+                </section>
+
+                <!-- Progress Comparison Card -->
+                <section class="glass-card comparison-card full-width">
+                    <div class="card-header">
+                        <h3>📊 مقارنة التطور والقياسات</h3>
+                        <small class="muted-text">مقارنة بين أول قياس مسجل وأحدث قياس</small>
+                    </div>
+
+                    <div class="comparison-grid">
+                        <div class="comp-box initial-box">
+                            <span class="comp-title">القياس الأول</span>
+                            <div class="comp-val" id="comp-initial-weight">-- كجم</div>
+                            <small id="comp-initial-date">--/--/----</small>
+                        </div>
+
+                        <div class="comp-arrow">➡️</div>
+
+                        <div class="comp-box latest-box">
+                            <span class="comp-title">القياس الحالي</span>
+                            <div class="comp-val" id="comp-latest-weight">-- كجم</div>
+                            <small id="comp-latest-date">--/--/----</small>
+                        </div>
+
+                        <div class="comp-box diff-box" id="comp-diff-box">
+                            <span class="comp-title">التغير الإجمالي</span>
+                            <div class="comp-val diff-val" id="comp-weight-diff">0 كجم</div>
+                            <span class="diff-badge" id="comp-diff-badge">ثابت</span>
+                        </div>
+                    </div>
+
+                    <!-- History Log Table -->
+                    <div class="history-table-wrap">
+                        <h4>سجل القياسات السابقة</h4>
+                        <table class="history-table">
+                            <thead>
+                                <tr>
+                                    <th>التاريخ</th>
+                                    <th>الوزن</th>
+                                    <th>الطول</th>
+                                    <th>مؤشر كتلة الجسم (BMI)</th>
+                                </tr>
+                            </thead>
+                            <tbody id="history-table-body">
+                                <tr>
+                                    <td colspan="4" class="empty-msg">لا توجد قياسات مسجلة بعد.</td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </section>
+
+                <!-- Attendance Log Card -->
+                <section class="glass-card attendance-card full-width">
+                    <div class="card-header">
+                        <h3>🏃‍♂️ سجل الحضور والتمارين</h3>
+                        <span class="attendance-count-badge" id="dash-attendance-count">0 مرات حضور</span>
+                    </div>
+
+                    <div class="attendance-list-wrap" id="dash-attendance-list">
+                        <p class="empty-msg">لم يتم تسجيل حضور بعد.</p>
+                    </div>
+                </section>
+
+                <!-- QR Code Card -->
+                <section class="glass-card qr-card full-width" id="qr-code-section">
+                    <div class="card-header">
+                        <h3>📲 كود QR للحضور</h3>
+                        <small class="muted-text">أرِ هذا الكود للكابتن عند الدخول</small>
+                    </div>
+                    <div class="qr-body">
+                        <div class="qr-canvas-wrap">
+                            <canvas id="member-qr-canvas"></canvas>
+                        </div>
+                        <div class="qr-member-info">
+                            <p class="qr-name" id="qr-display-name">اسم المشترك</p>
+                            <p class="qr-code-tag" id="qr-display-code">ZI-0000</p>
+                            <p class="qr-hint">امسح الكود لتسجيل الحضور أو عرض بياناتك</p>
+                        </div>
+                    </div>
+                </section>
+
+            </div>
+        </main>
+
+    </div>
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
+    <script src="member-app.js"></script>
+</body>
+</html>

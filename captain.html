@@ -1,0 +1,138 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0">
+    <meta name="theme-color" content="#0b0f19">
+    <meta name="mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-title" content="كابتن الجيم">
+    <title>تطبيق الكابتن | Zahran Informa</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;600;700;800;900&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="captain-app.css">
+</head>
+<body>
+
+<div class="captain-app" id="captain-app">
+
+    <!-- Login Screen -->
+    <main class="cap-screen active" id="login-screen">
+        <div class="cap-login-card">
+            <img src="assets/zahran-informa-logo.png" alt="Zahran Informa" class="cap-logo">
+            <h1>تطبيق الكابتن</h1>
+            <p class="cap-sub">أدخل كود الكابتن للدخول</p>
+            <form id="captain-login-form">
+                <div class="cap-input-group">
+                    <input type="password" id="captain-code-field" placeholder="كود الكابتن" minlength="4" required autocomplete="current-password">
+                </div>
+                <button type="submit" class="cap-btn" id="captain-login-btn">
+                    <span>دخول</span>
+                </button>
+            </form>
+            <p class="cap-feedback" id="login-msg" hidden></p>
+        </div>
+    </main>
+
+    <!-- Dashboard Screen -->
+    <main class="cap-screen" id="dashboard-screen" hidden>
+
+        <!-- Top Bar -->
+        <header class="cap-topbar">
+            <div class="cap-topbar-brand">
+                <img src="assets/zahran-informa-logo.png" alt="" class="cap-top-logo">
+                <strong>كابتن الجيم</strong>
+            </div>
+            <button class="cap-logout-btn" id="cap-logout-btn" type="button">خروج 🚪</button>
+        </header>
+
+        <!-- Tab Bar -->
+        <nav class="cap-tabs">
+            <button class="cap-tab active" data-tab="scan" id="tab-scan">📷 مسح QR</button>
+            <button class="cap-tab" data-tab="today" id="tab-today">🏋️ في الجيم اليوم</button>
+        </nav>
+
+        <!-- QR Scan Tab -->
+        <section class="cap-tab-content active" id="tab-content-scan">
+            <div class="cap-scan-wrap">
+                <div class="cap-video-wrap" id="cap-video-wrap" hidden>
+                    <video id="cap-qr-video" autoplay muted playsinline></video>
+                    <canvas id="cap-qr-canvas" hidden></canvas>
+                    <div class="cap-scan-overlay">
+                        <div class="cap-scan-frame"></div>
+                        <p class="cap-scan-hint">ضع QR Code المشترك داخل الإطار</p>
+                    </div>
+                </div>
+
+                <div class="cap-scan-actions">
+                    <button class="cap-btn" id="cap-start-scan" type="button">📷 فتح الكاميرا ومسح QR</button>
+                    <button class="cap-btn cap-btn-danger" id="cap-stop-scan" type="button" hidden>إيقاف الكاميرا</button>
+                </div>
+
+                <p class="cap-msg" id="cap-scan-msg"></p>
+
+                <!-- Member Result Card -->
+                <div class="cap-member-card" id="cap-member-card" hidden>
+                    <div class="cap-member-header">
+                        <div class="cap-member-avatar" id="cap-member-avatar">🏋️</div>
+                        <div>
+                            <h2 id="cap-member-name">اسم المشترك</h2>
+                            <span class="cap-code-tag" id="cap-member-code">ZI-0000</span>
+                            <span class="cap-status-badge" id="cap-member-status">نشط</span>
+                        </div>
+                    </div>
+
+                    <div class="cap-member-details">
+                        <div class="cap-detail-row">
+                            <span>الباقة</span>
+                            <strong id="cap-member-plan">-</strong>
+                        </div>
+                        <div class="cap-detail-row">
+                            <span>الأيام المتبقية</span>
+                            <strong id="cap-member-days">-</strong>
+                        </div>
+                        <div class="cap-detail-row">
+                            <span>تاريخ الانتهاء</span>
+                            <strong id="cap-member-end">-</strong>
+                        </div>
+                        <div class="cap-detail-row">
+                            <span>رقم الهاتف</span>
+                            <strong id="cap-member-phone">-</strong>
+                        </div>
+                        <div class="cap-detail-row">
+                            <span>إجمالي الحضور</span>
+                            <strong id="cap-member-attendance">-</strong>
+                        </div>
+                    </div>
+
+                    <div class="cap-checkin-banner" id="cap-checkin-banner">
+                        <span id="cap-checkin-icon">✅</span>
+                        <span id="cap-checkin-msg">تم تسجيل الحضور</span>
+                    </div>
+
+                    <button class="cap-btn cap-btn-outline" id="cap-scan-again" type="button">مسح مشترك آخر 🔄</button>
+                </div>
+            </div>
+        </section>
+
+        <!-- Today Tab -->
+        <section class="cap-tab-content" id="tab-content-today" hidden>
+            <div class="cap-today-header">
+                <h2>من في الجيم اليوم</h2>
+                <span class="cap-today-count" id="cap-today-count">0 مشترك</span>
+                <button class="cap-btn cap-btn-sm" id="cap-refresh-today" type="button">🔄 تحديث</button>
+            </div>
+            <div class="cap-today-list" id="cap-today-list">
+                <p class="cap-empty">لا أحد في الجيم بعد اليوم.</p>
+            </div>
+        </section>
+
+    </main>
+
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/jsqr@1.4.0/dist/jsQR.js"></script>
+<script src="captain-app.js"></script>
+</body>
+</html>
