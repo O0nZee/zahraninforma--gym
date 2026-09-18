@@ -140,18 +140,20 @@ body {
     display: flex;
     background: var(--bg-card);
     border-bottom: 1px solid rgba(255,255,255,0.06);
+    overflow-x: auto;
 }
 
 .tab-btn {
     flex: 1;
-    padding: 12px 8px;
+    padding: 12px 6px;
     background: none;
     border: none;
     border-bottom: 3px solid transparent;
     color: var(--text-muted);
-    font-size: 0.9rem;
+    font-size: 0.82rem;
     cursor: pointer;
     transition: all 0.2s;
+    white-space: nowrap;
 }
 
 .tab-btn.active {
@@ -219,6 +221,64 @@ body {
 
 .msg-success { color: var(--success); }
 .msg-error { color: var(--danger); }
+
+/* Photo Section */
+.photo-section {
+    text-align: center;
+}
+
+.photo-preview {
+    width: 120px;
+    height: 120px;
+    border-radius: 50%;
+    background: var(--bg-input);
+    border: 2px dashed rgba(255,255,255,0.15);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin: 8px auto 12px;
+    overflow: hidden;
+    font-size: 2rem;
+}
+
+.photo-preview img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    border-radius: 50%;
+}
+
+.photo-actions {
+    display: flex;
+    gap: 8px;
+    justify-content: center;
+    flex-wrap: wrap;
+}
+
+.photo-btn {
+    display: inline-flex;
+    align-items: center;
+    gap: 4px;
+    padding: 8px 14px;
+    background: var(--bg-input);
+    color: var(--text);
+    border: 1px solid rgba(255,255,255,0.1);
+    border-radius: 8px;
+    font-size: 0.82rem;
+    cursor: pointer;
+    transition: background 0.2s;
+}
+
+.photo-btn:active { background: rgba(255,255,255,0.1); }
+
+.photo-btn.danger {
+    color: var(--danger);
+    border-color: var(--danger);
+}
+
+.photo-btn.danger:active {
+    background: rgba(248,113,113,0.15);
+}
 
 /* Search */
 .search-box {
@@ -328,3 +388,129 @@ body {
 }
 
 .refresh-btn:active { background: rgba(255,255,255,0.1); }
+
+/* ── Finance (الخزنة) ── */
+.finance-summary {
+    display: grid;
+    grid-template-columns: 1fr 1fr 1fr;
+    gap: 10px;
+    margin-bottom: 1.2rem;
+}
+
+.fin-card {
+    background: var(--bg-card);
+    border-radius: var(--radius);
+    padding: 14px 10px;
+    text-align: center;
+}
+
+.fin-card-label {
+    font-size: 0.75rem;
+    color: var(--text-muted);
+    margin-bottom: 4px;
+}
+
+.fin-card-value {
+    font-size: 1.2rem;
+    font-weight: bold;
+}
+
+.fin-card.income .fin-card-value { color: var(--success); }
+.fin-card.expense .fin-card-value { color: var(--danger); }
+.fin-card.net .fin-card-value { color: var(--accent); }
+.fin-card.net.negative .fin-card-value { color: var(--danger); }
+
+.finance-form {
+    background: var(--bg-card);
+    border-radius: var(--radius);
+    padding: 16px;
+    margin-bottom: 1rem;
+}
+
+.fin-row {
+    display: flex;
+    gap: 10px;
+    margin-bottom: 10px;
+}
+
+.fin-row select,
+.fin-row input {
+    flex: 1;
+    padding: 12px 14px;
+    border: 1px solid rgba(255,255,255,0.1);
+    border-radius: 10px;
+    background: var(--bg-input);
+    color: var(--text);
+    font-size: 1rem;
+    outline: none;
+}
+
+.fin-row select:focus,
+.fin-row input:focus {
+    border-color: var(--accent);
+}
+
+.finance-form > input {
+    width: 100%;
+    padding: 12px 14px;
+    border: 1px solid rgba(255,255,255,0.1);
+    border-radius: 10px;
+    background: var(--bg-input);
+    color: var(--text);
+    font-size: 1rem;
+    outline: none;
+    margin-bottom: 10px;
+}
+
+.finance-form > input:focus {
+    border-color: var(--accent);
+}
+
+.fin-entries {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+}
+
+.fin-entry {
+    background: var(--bg-card);
+    border-radius: var(--radius);
+    padding: 12px 16px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+}
+
+.fin-entry-right {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+
+.fin-type-dot {
+    width: 10px;
+    height: 10px;
+    border-radius: 50%;
+    flex-shrink: 0;
+}
+
+.dot-income { background: var(--success); }
+.dot-expense { background: var(--danger); }
+
+.fin-entry-note {
+    font-size: 0.92rem;
+}
+
+.fin-entry-date {
+    font-size: 0.75rem;
+    color: var(--text-muted);
+}
+
+.fin-entry-amount {
+    font-weight: bold;
+    font-size: 0.95rem;
+    white-space: nowrap;
+}
+
+.amount-income { color: var(--success); }
+.amount-expense { color: var(--danger); }

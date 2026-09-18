@@ -21,6 +21,13 @@
     const addForm        = document.getElementById("add-member-form");
     const addMsg         = document.getElementById("add-message");
 
+    // Photo
+    const photoPreview   = document.getElementById("sv-photo-preview");
+    const photoData      = document.getElementById("sv-photo-data");
+    const cameraInput    = document.getElementById("sv-camera-input");
+    const uploadInput    = document.getElementById("sv-upload-input");
+    const clearPhotoBtn  = document.getElementById("sv-clear-photo");
+
     // Attendance
     const attendSearch   = document.getElementById("attend-search");
     const attendList     = document.getElementById("attend-list");
@@ -29,6 +36,15 @@
     const todayCount     = document.getElementById("today-count");
     const todayList      = document.getElementById("today-list");
     const refreshTodayBtn = document.getElementById("refresh-today");
+
+    // Finance
+    const finForm        = document.getElementById("finance-form");
+    const finMsg         = document.getElementById("fin-message");
+    const finIncome      = document.getElementById("fin-income");
+    const finExpense     = document.getElementById("fin-expense");
+    const finNet         = document.getElementById("fin-net");
+    const finList        = document.getElementById("finance-list");
+    const finDateInput   = document.getElementById("fin-date");
 
     /* ── Login / Logout ── */
     loginForm.addEventListener("submit", async function (e) {
@@ -83,6 +99,7 @@
             document.getElementById("tab-" + target).classList.add("active");
             if (target === "attend") loadMembers();
             if (target === "today") loadToday();
+            if (target === "finance") loadFinance();
         });
     });
 
@@ -97,6 +114,50 @@
         renderAttendList();
     }
 
+    /* ── Photo Processing ── */
+    function processPhoto(file) {
+        if (!file) return;
+        var reader = new FileReader();
+        reader.onload = function (e) {
+            var img = new Image();
+            img.onload = function () {
+                var maxW = 600, maxH = 600;
+                var w = img.width, h = img.height;
+                if (w > maxW || h > maxH) {
+                    var ratio = Math.min(maxW / w, maxH / h);
+                    w = Math.round(w * ratio);
+                    h = Math.round(h * ratio);
+                }
+                var canvas = document.createElement("canvas");
+                canvas.width = w;
+                canvas.height = h;
+                canvas.getContext("2d").drawImage(img, 0, 0, w, h);
+                var dataUrl = canvas.toDataURL("image/jpeg", 0.7);
+                photoData.value = dataUrl;
+                photoPreview.innerHTML = '<img src="' + dataUrl + '">';
+                clearPhotoBtn.style.display = "inline-block";
+            };
+            img.src = e.target.result;
+        };
+        reader.readAsDataURL(file);
+    }
+
+    cameraInput.addEventListener("change", function () {
+        if (this.files && this.files[0]) processPhoto(this.files[0]);
+    });
+
+    uploadInput.addEventListener("change", function () {
+        if (this.files && this.files[0]) processPhoto(this.files[0]);
+    });
+
+    clearPhotoBtn.addEventListener("click", function () {
+        photoData.value = "";
+        photoPreview.innerHTML = "<span>📷</span>";
+        clearPhotoBtn.style.display = "none";
+        cameraInput.value = "";
+        uploadInput.value = "";
+    });
+
     /* ── Add Member ── */
     addForm.addEventListener("submit", async function (e) {
         e.preventDefault();
@@ -108,6 +169,7 @@
         const phone = document.getElementById("add-phone").value.trim();
         const plan  = document.getElementById("add-plan").value;
         const price = Number(document.getElementById("add-price").value) || 0;
+        const photo = photoData.value || "";
 
         if (!name || !code) {
             addMsg.textContent = "الاسم والكود مطلوبان.";
@@ -122,7 +184,7 @@
         const endDate = new Date(now.getTime() + totalDays * 86400000).toISOString().slice(0, 10);
 
         const member = {
-            name, code, phone, plan, price,
+            name, code, phone, plan, price, photo,
             totalDays,
             remainingDays: totalDays,
             subscriptionStartedAt: startDate,
@@ -145,6 +207,9 @@
                 addMsg.textContent = "تم إضافة المشترك بنجاح ✅";
                 addMsg.className = "form-message msg-success";
                 addForm.reset();
+                photoData.value = "";
+                photoPreview.innerHTML = "<span>📷</span>";
+                clearPhotoBtn.style.display = "none";
                 loadMembers();
             } else {
                 addMsg.textContent = data.error || "حدث خطأ.";
@@ -260,6 +325,105 @@
             todayList.innerHTML = '<div class="empty-state">تعذر تحميل البيانات</div>';
         }
     }
+
+    /* ── Finance (الخزنة) ── */
+    finDateInput.value = new Date().toISOString().slice(0, 10);
+
+    async function loadFinance() {
+        finList.innerHTML = '<div class="empty-state">جاري التحميل...</div>';
+        try {
+            var res = await fetch(API + "/api/finance");
+            var entries = await res.json();
+            if (!Array.isArray(entries)) entries = [];
+
+            var totalIncome = 0, totalExpense = 0;
+            entries.forEach(function (e) {
+                if (e.type === "income") totalIncome += Number(e.amount) || 0;
+                else totalExpense += Number(e.amount) || 0;
+            });
+
+            finIncome.textContent = totalIncome.toLocaleString();
+            finExpense.textContent = totalExpense.toLocaleString();
+            var net = totalIncome - totalExpense;
+            finNet.textContent = net.toLocaleString();
+            finNet.parentElement.className = "fin-card net" + (net < 0 ? " negative" : "");
+
+            if (!entries.length) {
+                finList.innerHTML = '<div class="empty-state">لا توجد حركات مالية</div>';
+                return;
+            }
+
+            entries.sort(function (a, b) {
+                return (b.date || b.createdAt || "").localeCompare(a.date || a.createdAt || "");
+            });
+
+            finList.innerHTML = '<div class="fin-entries">' + entries.map(function (e) {
+                var isIncome = e.type === "income";
+                return '<div class="fin-entry">' +
+                    '<div class="fin-entry-right">' +
+                        '<span class="fin-type-dot ' + (isIncome ? 'dot-income' : 'dot-expense') + '"></span>' +
+                        '<div><div class="fin-entry-note">' + escHtml(e.note) + '</div>' +
+                        '<div class="fin-entry-date">' + escHtml(e.date || "") + '</div></div>' +
+                    '</div>' +
+                    '<div class="fin-entry-amount ' + (isIncome ? 'amount-income' : 'amount-expense') + '">' +
+                        (isIncome ? '+' : '-') + Number(e.amount).toLocaleString() +
+                    '</div>' +
+                '</div>';
+            }).join("") + '</div>';
+        } catch {
+            finList.innerHTML = '<div class="empty-state">تعذر تحميل البيانات</div>';
+        }
+    }
+
+    finForm.addEventListener("submit", async function (e) {
+        e.preventDefault();
+        finMsg.textContent = "";
+        finMsg.className = "form-message";
+
+        var type   = document.getElementById("fin-type").value;
+        var amount = Number(document.getElementById("fin-amount").value);
+        var note   = document.getElementById("fin-note").value.trim();
+        var date   = finDateInput.value || new Date().toISOString().slice(0, 10);
+
+        if (!amount || amount <= 0) {
+            finMsg.textContent = "المبلغ مطلوب.";
+            finMsg.className = "form-message msg-error";
+            return;
+        }
+        if (!note) {
+            finMsg.textContent = "الملاحظة مطلوبة.";
+            finMsg.className = "form-message msg-error";
+            return;
+        }
+
+        var submitBtn = finForm.querySelector(".submit-btn");
+        submitBtn.disabled = true;
+
+        try {
+            var res = await fetch(API + "/api/finance", {
+                method: "POST",
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify({ type: type, amount: amount, note: note, date: date })
+            });
+            var data = await res.json();
+            if (res.ok) {
+                finMsg.textContent = "تمت الإضافة ✅";
+                finMsg.className = "form-message msg-success";
+                document.getElementById("fin-amount").value = "";
+                document.getElementById("fin-note").value = "";
+                finDateInput.value = new Date().toISOString().slice(0, 10);
+                loadFinance();
+            } else {
+                finMsg.textContent = data.error || "حدث خطأ.";
+                finMsg.className = "form-message msg-error";
+            }
+        } catch {
+            finMsg.textContent = "تعذر الاتصال بالسيرفر.";
+            finMsg.className = "form-message msg-error";
+        } finally {
+            submitBtn.disabled = false;
+        }
+    });
 
     /* ── Helpers ── */
     function escHtml(s) {

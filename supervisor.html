@@ -31,6 +31,7 @@
         <button class="tab-btn active" data-tab="add">إضافة مشترك</button>
         <button class="tab-btn" data-tab="attend">تسجيل حضور</button>
         <button class="tab-btn" data-tab="today">حضور اليوم</button>
+        <button class="tab-btn" data-tab="finance">الخزنة</button>
     </nav>
 
     <!-- Tab: Add Member -->
@@ -60,6 +61,16 @@
                 <label>السعر (جنيه)</label>
                 <input type="number" id="add-price" min="0" placeholder="0">
             </div>
+            <div class="form-group photo-section">
+                <label>صورة المشترك</label>
+                <div class="photo-preview" id="sv-photo-preview"><span>📷</span></div>
+                <input type="hidden" id="sv-photo-data">
+                <div class="photo-actions">
+                    <label class="photo-btn">📱 تصوير<input type="file" accept="image/*" capture="user" id="sv-camera-input" hidden></label>
+                    <label class="photo-btn">🖼️ رفع صورة<input type="file" accept="image/*" id="sv-upload-input" hidden></label>
+                    <button type="button" class="photo-btn danger" id="sv-clear-photo" style="display:none">✕ مسح</button>
+                </div>
+            </div>
             <button type="submit" class="submit-btn">إضافة المشترك</button>
             <p class="form-message" id="add-message"></p>
         </form>
@@ -79,6 +90,29 @@
         <div class="today-label">مشترك سجل حضور اليوم</div>
         <div id="today-list"></div>
         <button class="refresh-btn" id="refresh-today">🔄 تحديث</button>
+    </div>
+
+    <!-- Tab: Finance (الخزنة) -->
+    <div class="tab-content" id="tab-finance">
+        <div class="finance-summary">
+            <div class="fin-card income"><div class="fin-card-label">إجمالي الوارد</div><div class="fin-card-value" id="fin-income">0</div></div>
+            <div class="fin-card expense"><div class="fin-card-label">إجمالي المصروف</div><div class="fin-card-value" id="fin-expense">0</div></div>
+            <div class="fin-card net"><div class="fin-card-label">الصافي</div><div class="fin-card-value" id="fin-net">0</div></div>
+        </div>
+        <form id="finance-form" class="finance-form">
+            <div class="fin-row">
+                <select id="fin-type">
+                    <option value="income">وارد</option>
+                    <option value="expense">مصروف</option>
+                </select>
+                <input type="number" id="fin-amount" placeholder="المبلغ" min="1" required>
+            </div>
+            <input type="text" id="fin-note" placeholder="ملاحظة (مطلوبة)" required>
+            <input type="date" id="fin-date">
+            <button type="submit" class="submit-btn">إضافة حركة</button>
+            <p class="form-message" id="fin-message"></p>
+        </form>
+        <div id="finance-list"></div>
     </div>
 </div>
 
