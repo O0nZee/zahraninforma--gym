@@ -1,0 +1,87 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Zahran Informa — المشرف</title>
+    <link rel="stylesheet" href="supervisor-app.css">
+</head>
+<body>
+
+<!-- Login Screen -->
+<div class="login-screen" id="login-screen">
+    <div class="login-logo">🛡️</div>
+    <h1>تطبيق المشرف</h1>
+    <p>Zahran Informa Gym</p>
+    <form class="login-form" id="login-form">
+        <input type="password" id="login-code" placeholder="أدخل كود المشرف" minlength="4" required autocomplete="off">
+        <button type="submit" id="login-btn">دخول</button>
+        <p class="login-error" id="login-error"></p>
+    </form>
+</div>
+
+<!-- App Shell -->
+<div class="app-shell" id="app-shell">
+    <header class="app-header">
+        <h1>🛡️ المشرف</h1>
+        <button class="logout-btn" id="logout-btn">خروج</button>
+    </header>
+
+    <nav class="tabs">
+        <button class="tab-btn active" data-tab="add">إضافة مشترك</button>
+        <button class="tab-btn" data-tab="attend">تسجيل حضور</button>
+        <button class="tab-btn" data-tab="today">حضور اليوم</button>
+    </nav>
+
+    <!-- Tab: Add Member -->
+    <div class="tab-content active" id="tab-add">
+        <form id="add-member-form">
+            <div class="form-group">
+                <label>اسم المشترك *</label>
+                <input type="text" id="add-name" required placeholder="الاسم بالكامل">
+            </div>
+            <div class="form-group">
+                <label>كود المشترك *</label>
+                <input type="text" id="add-code" required placeholder="مثال: ZI001">
+            </div>
+            <div class="form-group">
+                <label>رقم الموبايل</label>
+                <input type="tel" id="add-phone" placeholder="01xxxxxxxxx">
+            </div>
+            <div class="form-group">
+                <label>الخطة</label>
+                <select id="add-plan">
+                    <option value="شهر" selected>شهر (30 يوم)</option>
+                    <option value="نص شهر">نص شهر (15 يوم)</option>
+                    <option value="10 أيام">10 أيام</option>
+                </select>
+            </div>
+            <div class="form-group">
+                <label>السعر (جنيه)</label>
+                <input type="number" id="add-price" min="0" placeholder="0">
+            </div>
+            <button type="submit" class="submit-btn">إضافة المشترك</button>
+            <p class="form-message" id="add-message"></p>
+        </form>
+    </div>
+
+    <!-- Tab: Attendance -->
+    <div class="tab-content" id="tab-attend">
+        <div class="search-box">
+            <input type="text" id="attend-search" placeholder="ابحث بالاسم أو الكود أو الموبايل...">
+        </div>
+        <div id="attend-list"></div>
+    </div>
+
+    <!-- Tab: Today -->
+    <div class="tab-content" id="tab-today">
+        <div class="today-count" id="today-count">0</div>
+        <div class="today-label">مشترك سجل حضور اليوم</div>
+        <div id="today-list"></div>
+        <button class="refresh-btn" id="refresh-today">🔄 تحديث</button>
+    </div>
+</div>
+
+<script src="supervisor-app.js"></script>
+</body>
+</html>

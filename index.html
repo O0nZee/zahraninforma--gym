@@ -522,6 +522,28 @@
                     </form>
                 </div>
 
+                <div class="password-box" id="supervisor-code-section">
+                    <div class="panel-heading compact-heading">
+                        <div>
+                            <p class="eyebrow">تطبيق المشرفين</p>
+                            <h2>كود دخول المشرف</h2>
+                        </div>
+                        <p>المشرف بيستخدم الكود ده لدخول تطبيقه عشان يضيف مشتركين ويسجل حضور.</p>
+                    </div>
+                    <form class="password-form" id="supervisor-code-form">
+                        <label>
+                            كود المشرف الجديد
+                            <input type="password" name="supervisorCode" id="supervisor-code-input" minlength="4" autocomplete="new-password" placeholder="على الأقل 4 أرقام أو حروف" required>
+                        </label>
+                        <label>
+                            تأكيد الكود
+                            <input type="password" name="supervisorCodeConfirm" id="supervisor-code-confirm" minlength="4" autocomplete="new-password" placeholder="أعد كتابة الكود" required>
+                        </label>
+                        <button type="submit" id="save-supervisor-code-btn">حفظ كود المشرف</button>
+                        <p class="form-message" id="supervisor-code-message" role="status"></p>
+                    </form>
+                </div>
+
                 <div class="password-box" id="password-settings-section">
                     <div class="panel-heading compact-heading">
                         <div>

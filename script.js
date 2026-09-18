@@ -5731,13 +5731,64 @@ document.getElementById("captain-code-form")?.addEventListener("submit", async f
             body: JSON.stringify({ code })
         });
         const data = await res.json();
-        if (res.ok && data.success) {
+        if (res.ok && data.ok) {
             msg.textContent = "تم حفظ كود الكابتن بنجاح ✅";
             msg.style.color = "#6ee7b7";
             document.getElementById("captain-code-input").value  = "";
             document.getElementById("captain-code-confirm").value = "";
         } else {
             msg.textContent = data.message || "حدث خطأ أثناء الحفظ.";
+            msg.style.color = "#fca5a5";
+        }
+    } catch {
+        msg.textContent = "تعذر الاتصال بالخادم.";
+        msg.style.color = "#fca5a5";
+    } finally {
+        if (btn) btn.disabled = false;
+    }
+});
+
+/* =============================================
+   Supervisor Code Form (Settings Page)
+   ============================================= */
+document.getElementById("supervisor-code-form")?.addEventListener("submit", async function (e) {
+    e.preventDefault();
+    const code    = (document.getElementById("supervisor-code-input")?.value || "").trim();
+    const confirm = (document.getElementById("supervisor-code-confirm")?.value || "").trim();
+    const msg     = document.getElementById("supervisor-code-message");
+    if (!msg) return;
+
+    msg.textContent = "";
+    msg.className   = "settings-message";
+
+    if (!code || code.length < 4) {
+        msg.textContent = "الكود يجب أن يكون 4 أحرف على الأقل.";
+        msg.style.color = "#fca5a5";
+        return;
+    }
+    if (code !== confirm) {
+        msg.textContent = "الكودان غير متطابقَين.";
+        msg.style.color = "#fca5a5";
+        return;
+    }
+
+    const btn = document.getElementById("save-supervisor-code-btn");
+    if (btn) btn.disabled = true;
+
+    try {
+        const res  = await fetch("/api/supervisor/set-code", {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({ code })
+        });
+        const data = await res.json();
+        if (res.ok && data.ok) {
+            msg.textContent = "تم حفظ كود المشرف بنجاح ✅";
+            msg.style.color = "#6ee7b7";
+            document.getElementById("supervisor-code-input").value  = "";
+            document.getElementById("supervisor-code-confirm").value = "";
+        } else {
+            msg.textContent = data.error || data.message || "حدث خطأ أثناء الحفظ.";
             msg.style.color = "#fca5a5";
         }
     } catch {

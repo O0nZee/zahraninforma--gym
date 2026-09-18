@@ -828,6 +828,37 @@ async function handleApi(request, response) {
         return true;
     }
 
+    if (requestPath === "/api/supervisor/set-code" && request.method === "POST") {
+        const input = await readBody(request);
+        const code = String(input.code || "").trim();
+        if (!code || code.length < 4) {
+            sendJson(response, 400, { error: "كود المشرف يجب أن يكون 4 أحرف على الأقل." });
+            return true;
+        }
+        const settings = await readJson(dataFiles.settingsFile, {});
+        settings.supervisorCode = code;
+        await writeJson(dataFiles.settingsFile, settings);
+        sendJson(response, 200, { ok: true, message: "تم حفظ كود المشرف بنجاح." });
+        return true;
+    }
+
+    if (requestPath === "/api/supervisor/login" && request.method === "POST") {
+        const input = await readBody(request);
+        const code = String(input.code || "").trim();
+        const settings = await readJson(dataFiles.settingsFile, {});
+        const supervisorCode = String(settings.supervisorCode || "").trim();
+        if (!supervisorCode) {
+            sendJson(response, 403, { error: "لم يتم تعيين كود المشرف بعد. تواصل مع الكابتن." });
+            return true;
+        }
+        if (code !== supervisorCode) {
+            sendJson(response, 401, { error: "كود المشرف غير صحيح." });
+            return true;
+        }
+        sendJson(response, 200, { ok: true });
+        return true;
+    }
+
     if (requestPath === "/api/captain/today" && request.method === "GET") {
         const members = await readJson(dataFiles.membersFile, []);
         const today = new Date().toISOString().slice(0, 10);
@@ -1272,7 +1303,7 @@ async function handleApi(request, response) {
             attendanceCount: attendanceLog.length
         });
         members[memberIndex] = updatedMember;
-        await saveJson(dataFiles.membersFile, members);
+        await writeJson(dataFiles.membersFile, members);
 
         sendJson(response, 200, { ok: true, alreadyCheckedIn: false, member: updatedMember, message: `تم تسجيل حضور ${updatedMember.name} بنجاح! ✅` });
         return true;
@@ -1293,6 +1324,8 @@ async function serveStatic(request, response) {
         requestedPath = "/index.html";
     } else if (requestedPath === "/member") {
         requestedPath = "/member.html";
+    } else if (requestedPath === "/supervisor") {
+        requestedPath = "/supervisor.html";
     }
 
     const filePath = path.normalize(path.join(rootDir, requestedPath));
