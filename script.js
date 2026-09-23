@@ -56,6 +56,7 @@ const pageLinks = document.querySelectorAll("[data-page-link]");
 const pageSections = document.querySelectorAll("[data-page]");
 const membersPageCount = document.getElementById("members-page-count");
 const refreshMembers = document.getElementById("refresh-members");
+const exportExcelBtn = document.getElementById("export-excel-btn");
 const settingsPreviewName = document.getElementById("settings-preview-name");
 const settingsPreviewPrefix = document.getElementById("settings-preview-prefix");
 const settingsPreviewStorage = document.getElementById("settings-preview-storage");
@@ -5480,6 +5481,36 @@ membersTable?.addEventListener("click", async (event) => {
 refreshMembers?.addEventListener("click", async () => {
     await loadMembers();
     renderMembers();
+});
+
+exportExcelBtn?.addEventListener("click", async () => {
+    const original = exportExcelBtn.textContent;
+    exportExcelBtn.disabled = true;
+    exportExcelBtn.textContent = "جاري التصدير...";
+    try {
+        const res = await fetch("/api/members/export", {
+            headers: { ...getSyncAccountHeaders() },
+            cache: "no-store"
+        });
+        if (!res.ok) throw new Error("export failed");
+        const blob = await res.blob();
+        const url = URL.createObjectURL(blob);
+        const link = document.createElement("a");
+        link.href = url;
+        link.download = `members-${new Date().toISOString().slice(0, 10)}.xlsx`;
+        document.body.appendChild(link);
+        link.click();
+        link.remove();
+        window.setTimeout(() => URL.revokeObjectURL(url), 5000);
+        exportExcelBtn.textContent = "تم التصدير ✅";
+    } catch {
+        exportExcelBtn.textContent = "تعذّر التصدير — جرّب من متصفح";
+    } finally {
+        window.setTimeout(() => {
+            exportExcelBtn.textContent = original;
+            exportExcelBtn.disabled = false;
+        }, 1800);
+    }
 });
 
 refreshSessions?.addEventListener("click", async () => {

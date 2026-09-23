@@ -2,6 +2,7 @@ const http = require("http");
 const fs = require("fs/promises");
 const path = require("path");
 const crypto = require("crypto");
+const { buildXlsx } = require("./xlsx-lite.js");
 
 const rootDir = __dirname;
 const dataDir = process.env.DATA_DIR || path.join(rootDir, "data");
@@ -201,6 +202,7 @@ function normalizeMember(input, currentMember = {}) {
         photo: String(input.photo ?? currentMember.photo ?? "").trim(),
         faceSignature: String(input.faceSignature ?? currentMember.faceSignature ?? "").trim(),
         photoEnhanced: Boolean(input.photoEnhanced ?? currentMember.photoEnhanced),
+        source: String(input.source || currentMember.source || "").trim(),
         createdAt: currentMember.createdAt || input.createdAt || new Date().toISOString(),
         updatedAt: input.updatedAt || currentMember.updatedAt || null
     };
@@ -951,6 +953,45 @@ async function handleApi(request, response) {
     if (requestPath === "/api/members" && request.method === "GET") {
         const members = await readJson(dataFiles.membersFile, []);
         sendJson(response, 200, members);
+        return true;
+    }
+
+    if (requestPath === "/api/members/export" && request.method === "GET") {
+        const members = await readJson(dataFiles.membersFile, []);
+        const headers = [
+            "الاسم", "الكود", "رقم الهاتف", "الوزن (كجم)", "الخطة", "السعر",
+            "الأيام المتبقية", "بداية الاشتراك", "نهاية الاشتراك",
+            "عدد مرات الحضور", "مسجّل بواسطة", "تاريخ التسجيل"
+        ];
+        const rows = (Array.isArray(members) ? members : []).map((m) => {
+            const source = String(m.source || "").toLowerCase() === "supervisor" ? "المشرف" : "الكابتن";
+            const createdAt = m.createdAt ? String(m.createdAt).slice(0, 10) : "";
+            const attendance = Array.isArray(m.attendanceLog) ? m.attendanceLog.length : (Number(m.attendanceCount) || 0);
+            return [
+                String(m.name || ""),
+                String(m.code || ""),
+                String(m.phone || ""),
+                Number(m.weight) || 0,
+                String(m.plan || ""),
+                Number(m.price) || 0,
+                Number(m.remainingDays) || 0,
+                String(m.subscriptionStartedAt || "").slice(0, 10),
+                String(m.subscriptionEndsAt || "").slice(0, 10),
+                attendance,
+                source,
+                createdAt
+            ];
+        });
+
+        const buffer = buildXlsx(headers, rows, "المشتركين");
+        const fileName = `members-${new Date().toISOString().slice(0, 10)}.xlsx`;
+        response.writeHead(200, {
+            "Content-Type": "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
+            "Content-Disposition": `attachment; filename="${fileName}"`,
+            "Content-Length": buffer.length,
+            "Cache-Control": "no-store"
+        });
+        response.end(buffer);
         return true;
     }
 

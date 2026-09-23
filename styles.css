@@ -1310,6 +1310,15 @@ body.light-mode .theme-icon-sun {
     margin-bottom: 18px;
 }
 
+.members-toolbar-actions {
+    grid-column: span 2;
+    display: flex;
+    gap: 10px;
+    align-items: center;
+    justify-content: flex-end;
+    flex-wrap: wrap;
+}
+
 .settings-control-grid article,
 .members-toolbar {
     border: 1px solid var(--line);
