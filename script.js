@@ -2255,12 +2255,6 @@ function renderAppApprovalBadge(member) {
 }
 
 function renderMembers() {
-    const query = (searchInput?.value || "").trim().toLowerCase();
-    const visibleMembers = membersCache.filter((member) => {
-        const searchValue = `${member.code} ${member.name} ${member.phone} ${member.weight} ${member.height} ${member.plan} ${member.price} ${member.remainingDays}`.toLowerCase();
-        return searchValue.includes(query);
-    });
-
     totalMembers.textContent = `${membersCache.length.toLocaleString("ar-EG")} مشترك`;
     if (membersPageCount) {
         membersPageCount.textContent = `${membersCache.length.toLocaleString("ar-EG")} مشترك`;
@@ -2270,6 +2264,18 @@ function renderMembers() {
     statLastDate.textContent = membersCache[0] ? formatDate(membersCache[0].createdAt) : "-";
     renderSessionsPage();
     renderWhatsAppAutoReminders();
+    renderMembersTable();
+}
+
+// Only the table depends on the search query, so typing re-renders just this.
+function renderMembersTable() {
+    const query = (searchInput?.value || "").trim().toLowerCase();
+    const visibleMembers = query
+        ? membersCache.filter((member) => {
+            const searchValue = `${member.code} ${member.name} ${member.phone} ${member.weight} ${member.height} ${member.plan} ${member.price} ${member.remainingDays}`.toLowerCase();
+            return searchValue.includes(query);
+        })
+        : membersCache;
 
     if (!visibleMembers.length) {
         membersTable.innerHTML = `<tr><td colspan="13" class="empty-cell">لسه مفيش مشتركين.</td></tr>`;
@@ -4421,7 +4427,11 @@ window.addEventListener("beforeunload", () => {
     stopAttendanceCamera();
 });
 
-searchInput?.addEventListener("input", renderMembers);
+let membersSearchDebounce;
+searchInput?.addEventListener("input", () => {
+    clearTimeout(membersSearchDebounce);
+    membersSearchDebounce = setTimeout(renderMembersTable, 180);
+});
 planSelect?.addEventListener("change", () => applyPlanDefaultsToForm(true));
 progressMonth?.addEventListener("change", renderProgressSummary);
 progressMemberSelect?.addEventListener("change", fillProgressFieldsFromMember);
