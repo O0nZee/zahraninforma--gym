@@ -1609,6 +1609,10 @@ function getRandomChallenge() {
     return challenge;
 }
 
+function hasAndroidBiometricBridge() {
+    return Boolean(window.ZahranAndroid && typeof window.ZahranAndroid.authenticateBiometric === "function");
+}
+
 function isAndroidBiometricAvailable() {
     try {
         return Boolean(window.ZahranAndroid?.isBiometricAvailable?.());
@@ -1742,7 +1746,12 @@ async function enableBiometricLoginOnDevice() {
     }
 
     try {
-        if (isAndroidBiometricAvailable()) {
+        if (hasAndroidBiometricBridge()) {
+            // التطبيق الأصلي موجود، بس لازم يكون فيه قفل شاشة/بصمة متسجّل على الموبايل
+            if (!isAndroidBiometricAvailable()) {
+                setBiometricMessage("فعّل قفل الشاشة أو البصمة من إعدادات الموبايل الأول، وبعدها ارجع فعّل البصمة هنا.", "error");
+                return;
+            }
             localStorage.setItem(BIOMETRIC_LOGIN_KEY, "android");
             setBiometricMessage("تم تفعيل دخول البصمة على هذا الهاتف.", "success");
             updateBiometricUi();
@@ -5811,3 +5820,99 @@ document.getElementById("supervisor-code-form")?.addEventListener("submit", asyn
         if (btn) btn.disabled = false;
     }
 });
+
+/* =============================================
+   إشعارات الكابتن: لما المشرف يسجّل مشترك جديد
+   ============================================= */
+const CAPTAIN_NOTIF_LAST_SEEN_KEY = "zahran_informa_notif_last_seen";
+
+function ensureNotificationToastHost() {
+    let host = document.getElementById("captain-notif-host");
+    if (host) return host;
+
+    const style = document.createElement("style");
+    style.textContent = `
+        #captain-notif-host{position:fixed;top:16px;left:50%;transform:translateX(-50%);z-index:99999;display:flex;flex-direction:column;gap:10px;width:min(92vw,420px);pointer-events:none}
+        .captain-notif{pointer-events:auto;background:#0f766e;color:#fff;border-radius:14px;padding:12px 16px;box-shadow:0 10px 30px rgba(0,0,0,.35);font-size:15px;line-height:1.5;display:flex;gap:10px;align-items:flex-start;animation:capNotifIn .25s ease}
+        .captain-notif strong{display:block;margin-bottom:2px}
+        .captain-notif .cap-x{margin-inline-start:auto;cursor:pointer;opacity:.8;font-size:18px;line-height:1}
+        @keyframes capNotifIn{from{opacity:0;transform:translateY(-8px)}to{opacity:1;transform:none}}
+    `;
+    document.head.appendChild(style);
+
+    host = document.createElement("div");
+    host.id = "captain-notif-host";
+    host.setAttribute("dir", "rtl");
+    document.body.appendChild(host);
+    return host;
+}
+
+function showCaptainNotificationToast(title, body) {
+    const host = ensureNotificationToastHost();
+    const card = document.createElement("div");
+    card.className = "captain-notif";
+    card.setAttribute("role", "alert");
+    card.innerHTML = `<span>🔔</span><div><strong>${escapeHtml(title)}</strong><span>${escapeHtml(body)}</span></div><span class="cap-x">×</span>`;
+    const remove = () => card.remove();
+    card.querySelector(".cap-x")?.addEventListener("click", remove);
+    host.appendChild(card);
+    window.setTimeout(remove, 9000);
+
+    try {
+        const ctx = new (window.AudioContext || window.webkitAudioContext)();
+        const osc = ctx.createOscillator();
+        const gain = ctx.createGain();
+        osc.type = "sine";
+        osc.frequency.value = 880;
+        gain.gain.setValueAtTime(0.0001, ctx.currentTime);
+        gain.gain.exponentialRampToValueAtTime(0.2, ctx.currentTime + 0.02);
+        gain.gain.exponentialRampToValueAtTime(0.0001, ctx.currentTime + 0.4);
+        osc.connect(gain).connect(ctx.destination);
+        osc.start();
+        osc.stop(ctx.currentTime + 0.45);
+    } catch {
+        /* الصوت اختياري */
+    }
+}
+
+async function pollCaptainNotifications() {
+    if (navigator.onLine === false) return;
+
+    const lastSeen = localStorage.getItem(CAPTAIN_NOTIF_LAST_SEEN_KEY);
+    if (!lastSeen) {
+        // أول مرة: منعرضش الإشعارات القديمة، نبدأ من دلوقتي
+        localStorage.setItem(CAPTAIN_NOTIF_LAST_SEEN_KEY, new Date().toISOString());
+        return;
+    }
+
+    try {
+        const params = new URLSearchParams({ since: lastSeen });
+        const accountEmail = (typeof getSyncAccountHeaders === "function" && getSyncAccountHeaders()["X-Account-Email"]) || "";
+        if (accountEmail) params.set("account", accountEmail);
+
+        const res = await fetch(`/api/notifications?${params.toString()}`, { cache: "no-store" });
+        if (!res.ok) return;
+        const list = await res.json();
+        if (!Array.isArray(list) || !list.length) return;
+
+        // من الأقدم للأحدث عشان الترتيب يبقى منطقي
+        list.slice().reverse().forEach((item) => {
+            showCaptainNotificationToast(
+                item.title || "إشعار جديد",
+                item.body || `${item.memberName || ""} ${item.memberCode ? "- " + item.memberCode : ""}`.trim()
+            );
+        });
+
+        const newest = list
+            .map((item) => String(item.createdAt || ""))
+            .sort()
+            .pop();
+        if (newest) localStorage.setItem(CAPTAIN_NOTIF_LAST_SEEN_KEY, newest);
+    } catch {
+        /* هنعيد المحاولة في الدورة الجاية */
+    }
+}
+
+// نبدأ متابعة الإشعارات بعد تحميل الصفحة، وكل 20 ثانية
+window.setTimeout(pollCaptainNotifications, 3000);
+window.setInterval(pollCaptainNotifications, 20000);

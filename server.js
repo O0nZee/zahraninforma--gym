@@ -13,6 +13,7 @@ const financeArchiveFile = path.join(dataDir, "finance-archive.json");
 const renewalRequestsFile = path.join(dataDir, "renewal-requests.json");
 const auditLogFile = path.join(dataDir, "audit-log.json");
 const whatsappReminderLogFile = path.join(dataDir, "whatsapp-reminders.json");
+const notificationsFile = path.join(dataDir, "notifications.json");
 const port = Number(process.env.PORT || 8080);
 const whatsappApiVersion = String(process.env.WHATSAPP_API_VERSION || "v23.0").trim();
 const whatsappCloudToken = String(process.env.WHATSAPP_CLOUD_TOKEN || "").trim();
@@ -63,6 +64,7 @@ async function ensureDataFiles() {
     await ensureJsonFile(renewalRequestsFile, []);
     await ensureJsonFile(auditLogFile, []);
     await ensureJsonFile(whatsappReminderLogFile, {});
+    await ensureJsonFile(notificationsFile, []);
 }
 
 function normalizeAccountEmail(value) {
@@ -101,6 +103,7 @@ async function getDataFilesForRequest(request) {
             renewalRequestsFile,
             auditLogFile,
             whatsappReminderLogFile,
+            notificationsFile,
             accountFile: ""
         };
     }
@@ -117,6 +120,7 @@ async function getDataFilesForRequest(request) {
         renewalRequestsFile: path.join(accountDir, "renewal-requests.json"),
         auditLogFile: path.join(accountDir, "audit-log.json"),
         whatsappReminderLogFile: path.join(accountDir, "whatsapp-reminders.json"),
+        notificationsFile: path.join(accountDir, "notifications.json"),
         accountFile: path.join(accountDir, "account.json")
     };
 
@@ -127,6 +131,7 @@ async function getDataFilesForRequest(request) {
     await ensureJsonFile(files.renewalRequestsFile, []);
     await ensureJsonFile(files.auditLogFile, []);
     await ensureJsonFile(files.whatsappReminderLogFile, {});
+    await ensureJsonFile(files.notificationsFile, []);
     await ensureJsonFile(files.accountFile, {
         ownerEmail,
         syncTokenHash: "",
@@ -298,6 +303,19 @@ async function appendAuditLog(dataFiles, action, details = {}) {
 
     entries.unshift(entry);
     await writeJson(dataFiles.auditLogFile, entries.slice(0, 500));
+}
+
+async function appendNotification(dataFiles, notification) {
+    const list = await readJson(dataFiles.notificationsFile, []);
+    const entry = {
+        id: crypto.randomUUID ? crypto.randomUUID() : `${Date.now()}-${Math.random()}`,
+        createdAt: new Date().toISOString(),
+        ...notification
+    };
+
+    list.unshift(entry);
+    await writeJson(dataFiles.notificationsFile, list.slice(0, 100));
+    return entry;
 }
 
 async function decorateSettingsForResponse(settings, dataFiles) {
@@ -919,6 +937,17 @@ async function handleApi(request, response) {
         return true;
     }
 
+    if (requestPath === "/api/notifications" && request.method === "GET") {
+        const since = new URL(request.url, "http://localhost").searchParams.get("since") || "";
+        let list = await readJson(dataFiles.notificationsFile, []);
+        if (!Array.isArray(list)) list = [];
+        if (since) {
+            list = list.filter((item) => String(item.createdAt || "") > since);
+        }
+        sendJson(response, 200, list);
+        return true;
+    }
+
     if (requestPath === "/api/members" && request.method === "GET") {
         const members = await readJson(dataFiles.membersFile, []);
         sendJson(response, 200, members);
@@ -1088,6 +1117,22 @@ async function handleApi(request, response) {
                     }
                 } catch (e) {
                     console.warn("Auto finance creation error:", e);
+                }
+            }
+
+            // إشعار الكابتن لما المشرف يسجل مشترك جديد
+            if (String(input.source || "").toLowerCase() === "supervisor") {
+                try {
+                    await appendNotification(dataFiles, {
+                        type: "member-added",
+                        by: "supervisor",
+                        memberName: member.name,
+                        memberCode: member.code,
+                        title: "مشترك جديد من المشرف",
+                        body: `${member.name} - كود ${member.code}`
+                    });
+                } catch (e) {
+                    console.warn("Notification creation error:", e);
                 }
             }
         }

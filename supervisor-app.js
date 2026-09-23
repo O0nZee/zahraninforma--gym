@@ -206,6 +206,7 @@
 
         const member = {
             name, code, phone, weight, plan, price, photo,
+            source: "supervisor",
             totalDays,
             remainingDays: totalDays,
             subscriptionStartedAt: startDate,
