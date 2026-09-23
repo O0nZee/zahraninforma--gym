@@ -135,6 +135,49 @@
     </div>
 </div>
 
+<!-- Edit Member Modal -->
+<div class="edit-modal" id="edit-modal">
+    <div class="edit-modal-card">
+        <div class="edit-modal-head">
+            <h2>✏️ تعديل مشترك</h2>
+            <button type="button" class="edit-close" id="edit-close">✕</button>
+        </div>
+        <form id="edit-member-form">
+            <input type="hidden" id="edit-id">
+            <div class="form-group">
+                <label>اسم المشترك *</label>
+                <input type="text" id="edit-name" required placeholder="الاسم بالكامل">
+            </div>
+            <div class="form-group">
+                <label>كود المشترك *</label>
+                <input type="text" id="edit-code" required placeholder="مثال: ZI001">
+            </div>
+            <div class="form-group">
+                <label>رقم الموبايل</label>
+                <input type="tel" id="edit-phone" placeholder="01xxxxxxxxx">
+            </div>
+            <div class="form-group">
+                <label>وزن المشترك (كجم)</label>
+                <input type="number" id="edit-weight" min="0" step="0.1" placeholder="مثال: 80">
+            </div>
+            <div class="form-group">
+                <label>الخطة</label>
+                <select id="edit-plan">
+                    <option value="شهر">شهر (30 يوم)</option>
+                    <option value="نص شهر">نص شهر (15 يوم)</option>
+                    <option value="10 أيام">10 أيام</option>
+                </select>
+            </div>
+            <div class="form-group">
+                <label>السعر (جنيه)</label>
+                <input type="number" id="edit-price" min="0" placeholder="0">
+            </div>
+            <button type="submit" class="submit-btn">💾 حفظ التعديل</button>
+            <p class="form-message" id="edit-message"></p>
+        </form>
+    </div>
+</div>
+
 <script src="supervisor-app.js"></script>
 </body>
 </html>

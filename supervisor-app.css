@@ -579,3 +579,86 @@ body {
 
 .finance-unlock-form button:active { background: var(--accent-hover); }
 .finance-unlock-form button:disabled { opacity: 0.5; cursor: default; }
+
+/* ── Member card actions (تعديل / حذف) ── */
+.member-info { min-width: 0; flex: 1; }
+
+.member-actions {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    flex-shrink: 0;
+}
+
+.mini-btn {
+    width: 40px;
+    height: 40px;
+    border-radius: 10px;
+    border: 1px solid rgba(255,255,255,0.12);
+    background: var(--bg-input);
+    color: var(--text);
+    font-size: 1.05rem;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.mini-btn:active { background: rgba(255,255,255,0.1); }
+
+.mini-btn.del {
+    color: var(--danger);
+    border-color: var(--danger);
+}
+
+.mini-btn.del:active { background: rgba(248,113,113,0.15); }
+
+.attend-btn.small { padding: 10px 12px; font-size: 0.85rem; }
+
+/* ── Edit member modal ── */
+.edit-modal {
+    display: none;
+    position: fixed;
+    inset: 0;
+    background: rgba(0,0,0,0.65);
+    z-index: 1000;
+    align-items: flex-start;
+    justify-content: center;
+    padding: 20px;
+    overflow-y: auto;
+}
+
+.edit-modal.active { display: flex; }
+
+.edit-modal-card {
+    background: var(--bg-card);
+    border-radius: var(--radius);
+    padding: 20px;
+    width: 100%;
+    max-width: 420px;
+    margin: auto;
+}
+
+.edit-modal-head {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: 1rem;
+}
+
+.edit-modal-head h2 {
+    color: var(--accent);
+    font-size: 1.2rem;
+}
+
+.edit-close {
+    background: none;
+    border: none;
+    color: var(--text-muted);
+    font-size: 1.4rem;
+    cursor: pointer;
+    line-height: 1;
+    padding: 4px 8px;
+}
+
+.edit-close:active { color: var(--text); }

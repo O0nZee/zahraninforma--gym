@@ -284,9 +284,13 @@
                     '<h3>' + escHtml(m.name) + '</h3>' +
                     '<p>' + escHtml(m.code) + (m.phone ? ' • ' + escHtml(m.phone) : '') + '</p>' +
                 '</div>' +
-                (attended
-                    ? '<button class="attend-btn done" disabled>تم ✓</button>'
-                    : '<button class="attend-btn" onclick="supervisorApp.markAttendance(\'' + escAttr(m.id) + '\', this)">حضور</button>') +
+                '<div class="member-actions">' +
+                    (attended
+                        ? '<button class="attend-btn done small" disabled>تم ✓</button>'
+                        : '<button class="attend-btn small" onclick="supervisorApp.markAttendance(\'' + escAttr(m.id) + '\', this)">حضور</button>') +
+                    '<button class="mini-btn" title="تعديل" onclick="supervisorApp.editMember(\'' + escAttr(m.id) + '\')">✏️</button>' +
+                    '<button class="mini-btn del" title="حذف" onclick="supervisorApp.deleteMember(\'' + escAttr(m.id) + '\', this)">🗑️</button>' +
+                '</div>' +
             '</div>';
         }).join("");
     }
@@ -303,7 +307,7 @@
                 var data = await res.json();
                 if (res.ok) {
                     btnEl.textContent = "تم ✓";
-                    btnEl.className = "attend-btn done";
+                    btnEl.className = "attend-btn done small";
                     loadMembers();
                 } else {
                     alert(data.error || "حدث خطأ");
@@ -313,8 +317,130 @@
                 alert("تعذر الاتصال بالسيرفر.");
                 btnEl.disabled = false;
             }
+        },
+
+        editMember: function (memberId) {
+            var m = allMembers.find(function (x) { return String(x.id) === String(memberId); });
+            if (!m) { alert("المشترك غير موجود."); return; }
+            openEditModal(m);
+        },
+
+        deleteMember: async function (memberId, btnEl) {
+            var m = allMembers.find(function (x) { return String(x.id) === String(memberId); });
+            var name = m ? m.name : "المشترك";
+            if (!confirm("متأكد إنك عايز تحذف " + name + "؟\nده هيمسح المشترك نهائيًا ومش هينفع يرجع.")) return;
+
+            if (btnEl) btnEl.disabled = true;
+            try {
+                var res = await fetch(API + "/api/members/" + encodeURIComponent(memberId), { method: "DELETE" });
+                var data = await res.json().catch(function () { return {}; });
+                if (res.ok) {
+                    loadMembers();
+                } else {
+                    alert(data.error || "تعذر الحذف.");
+                    if (btnEl) btnEl.disabled = false;
+                }
+            } catch {
+                alert("تعذر الاتصال بالسيرفر.");
+                if (btnEl) btnEl.disabled = false;
+            }
         }
     };
+
+    /* ── Edit Member Modal ── */
+    const editModal   = document.getElementById("edit-modal");
+    const editForm    = document.getElementById("edit-member-form");
+    const editMsg     = document.getElementById("edit-message");
+    const editClose   = document.getElementById("edit-close");
+    const editId      = document.getElementById("edit-id");
+    const editName    = document.getElementById("edit-name");
+    const editCode    = document.getElementById("edit-code");
+    const editPhone   = document.getElementById("edit-phone");
+    const editWeight  = document.getElementById("edit-weight");
+    const editPlan    = document.getElementById("edit-plan");
+    const editPrice   = document.getElementById("edit-price");
+
+    function openEditModal(m) {
+        editMsg.textContent = "";
+        editMsg.className = "form-message";
+        editId.value    = m.id;
+        editName.value  = m.name || "";
+        editCode.value  = m.code || "";
+        editPhone.value = m.phone || "";
+        editWeight.value = m.weight || "";
+        editPlan.value  = m.plan || "شهر";
+        editPrice.value = m.price || "";
+        editModal.classList.add("active");
+    }
+
+    function closeEditModal() {
+        editModal.classList.remove("active");
+    }
+
+    editClose.addEventListener("click", closeEditModal);
+    editModal.addEventListener("click", function (e) {
+        if (e.target === editModal) closeEditModal();
+    });
+
+    editForm.addEventListener("submit", async function (e) {
+        e.preventDefault();
+        editMsg.textContent = "";
+        editMsg.className = "form-message";
+
+        var id    = editId.value;
+        var name  = editName.value.trim();
+        var code  = editCode.value.trim();
+        var phone = editPhone.value.trim();
+        var weight = Number(editWeight.value) || 0;
+        var plan  = editPlan.value;
+        var price = Number(editPrice.value) || 0;
+
+        if (!name || !code) {
+            editMsg.textContent = "الاسم والكود مطلوبان.";
+            editMsg.className = "form-message msg-error";
+            return;
+        }
+
+        var normCode = code.toLowerCase();
+        var duplicate = allMembers.some(function (m) {
+            return String(m.id) !== String(id) &&
+                   String(m.code || "").trim().toLowerCase() === normCode;
+        });
+        if (duplicate) {
+            editMsg.textContent = "فيه مشترك تاني بنفس الكود — غيّر الكود.";
+            editMsg.className = "form-message msg-error";
+            return;
+        }
+
+        var submitBtn = editForm.querySelector(".submit-btn");
+        submitBtn.disabled = true;
+
+        try {
+            var res = await fetch(API + "/api/members/" + encodeURIComponent(id), {
+                method: "PUT",
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify({ name: name, code: code, phone: phone, weight: weight, plan: plan, price: price })
+            });
+            var data = await res.json().catch(function () { return {}; });
+            if (res.ok) {
+                editMsg.textContent = "تم حفظ التعديل ✅";
+                editMsg.className = "form-message msg-success";
+                await loadMembers();
+                setTimeout(closeEditModal, 700);
+            } else if (res.status === 409) {
+                editMsg.textContent = "فيه مشترك تاني بنفس الكود — غيّر الكود.";
+                editMsg.className = "form-message msg-error";
+            } else {
+                editMsg.textContent = data.error || "حدث خطأ أثناء الحفظ.";
+                editMsg.className = "form-message msg-error";
+            }
+        } catch {
+            editMsg.textContent = "تعذر الاتصال بالسيرفر.";
+            editMsg.className = "form-message msg-error";
+        } finally {
+            submitBtn.disabled = false;
+        }
+    });
 
     /* ── Today ── */
     refreshTodayBtn.addEventListener("click", loadToday);
