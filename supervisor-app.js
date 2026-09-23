@@ -46,6 +46,14 @@
     const finList        = document.getElementById("finance-list");
     const finDateInput   = document.getElementById("fin-date");
 
+    // Finance lock (الخزنة مقفولة بكود الكابتن)
+    const finLock        = document.getElementById("finance-lock");
+    const finContent     = document.getElementById("finance-content");
+    const finUnlockForm  = document.getElementById("finance-unlock-form");
+    const finCodeInput   = document.getElementById("finance-code");
+    const finLockError   = document.getElementById("finance-lock-error");
+    let financeUnlocked  = false;
+
     /* ── Login / Logout ── */
     loginForm.addEventListener("submit", async function (e) {
         e.preventDefault();
@@ -80,6 +88,7 @@
         loginScreen.style.display = "flex";
         appShell.classList.remove("active");
         loginCodeInput.value = "";
+        financeUnlocked = false;
     });
 
     function showApp() {
@@ -99,7 +108,7 @@
             document.getElementById("tab-" + target).classList.add("active");
             if (target === "attend") loadMembers();
             if (target === "today") loadToday();
-            if (target === "finance") loadFinance();
+            if (target === "finance") { if (financeUnlocked) loadFinance(); else showFinanceLock(); }
         });
     });
 
@@ -167,12 +176,24 @@
         const name  = document.getElementById("add-name").value.trim();
         const code  = document.getElementById("add-code").value.trim();
         const phone = document.getElementById("add-phone").value.trim();
+        const weight = Number(document.getElementById("add-weight").value) || 0;
         const plan  = document.getElementById("add-plan").value;
         const price = Number(document.getElementById("add-price").value) || 0;
         const photo = photoData.value || "";
 
         if (!name || !code) {
             addMsg.textContent = "الاسم والكود مطلوبان.";
+            addMsg.className = "form-message msg-error";
+            return;
+        }
+
+        // Prevent adding the same member twice (duplicate code) — instant client check
+        var normCode = code.toLowerCase();
+        var duplicate = allMembers.some(function (m) {
+            return String(m.code || "").trim().toLowerCase() === normCode;
+        });
+        if (duplicate) {
+            addMsg.textContent = "المشترك موجود بالفعل بنفس الكود — مينفعش يتضاف مرتين.";
             addMsg.className = "form-message msg-error";
             return;
         }
@@ -184,7 +205,7 @@
         const endDate = new Date(now.getTime() + totalDays * 86400000).toISOString().slice(0, 10);
 
         const member = {
-            name, code, phone, plan, price, photo,
+            name, code, phone, weight, plan, price, photo,
             totalDays,
             remainingDays: totalDays,
             subscriptionStartedAt: startDate,
@@ -210,6 +231,12 @@
                 photoData.value = "";
                 photoPreview.innerHTML = "<span>📷</span>";
                 clearPhotoBtn.style.display = "none";
+                loadMembers();
+                // ملاحظة: تسجيل الفلوس في الخزنة بيتم تلقائياً في السيرفر عند إضافة المشترك
+                // (مرة واحدة فقط، بدون تكرار) — مش محتاج نبعت حركة مالية من هنا.
+            } else if (res.status === 409) {
+                addMsg.textContent = "المشترك موجود بالفعل بنفس الكود — مينفعش يتضاف مرتين.";
+                addMsg.className = "form-message msg-error";
                 loadMembers();
             } else {
                 addMsg.textContent = data.error || "حدث خطأ.";
@@ -328,6 +355,55 @@
 
     /* ── Finance (الخزنة) ── */
     finDateInput.value = new Date().toISOString().slice(0, 10);
+
+    /* ── Finance lock: الخزنة متاحة فقط بعد إدخال كود الكابتن ── */
+    function showFinanceLock() {
+        financeUnlocked = false;
+        if (finLock) finLock.style.display = "";
+        if (finContent) finContent.style.display = "none";
+        if (finLockError) finLockError.textContent = "";
+        if (finCodeInput) finCodeInput.value = "";
+    }
+
+    function showFinanceContent() {
+        financeUnlocked = true;
+        if (finLock) finLock.style.display = "none";
+        if (finContent) finContent.style.display = "";
+        loadFinance();
+    }
+
+    if (finUnlockForm) {
+        finUnlockForm.addEventListener("submit", async function (e) {
+            e.preventDefault();
+            var code = (finCodeInput.value || "").trim();
+            if (!code) return;
+
+            var btn = document.getElementById("finance-unlock-btn");
+            if (btn) btn.disabled = true;
+            finLockError.textContent = "";
+            finLockError.className = "form-message";
+
+            try {
+                var res = await fetch(API + "/api/captain/login", {
+                    method: "POST",
+                    headers: { "Content-Type": "application/json" },
+                    body: JSON.stringify({ code: code })
+                });
+                var data = await res.json();
+                if (res.ok && data.ok) {
+                    showFinanceContent();
+                } else {
+                    finLockError.textContent = data.error || "كود الكابتن غير صحيح.";
+                    finLockError.className = "form-message msg-error";
+                }
+            } catch {
+                finLockError.textContent = "تعذر الاتصال بالسيرفر.";
+                finLockError.className = "form-message msg-error";
+            } finally {
+                if (btn) btn.disabled = false;
+            }
+        });
+    }
 
     async function loadFinance() {
         finList.innerHTML = '<div class="empty-state">جاري التحميل...</div>';

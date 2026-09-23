@@ -1101,8 +1101,11 @@ async function recordNewMemberIncome(member) {
     }
 
     await loadFinanceEntries();
+    // Use a deterministic id tied to the member so this stays idempotent:
+    // the server auto-creates the same "sub_<id>" entry on member creation, so
+    // posting the same id here updates that entry instead of duplicating it.
     const entry = await saveFinanceEntry({
-        id: createId(),
+        id: `sub_${member.id}`,
         type: "income",
         amount,
         date: getTodayDateValue(),
@@ -1804,7 +1807,7 @@ function initialsFromName(name) {
 
 function renderMemberPhoto(member) {
     if (member.photo) {
-        return `<span class="member-avatar"><img src="${escapeHtml(member.photo)}" alt="صورة ${escapeHtml(member.name)}"></span>`;
+        return `<span class="member-avatar"><img src="${escapeHtml(member.photo)}" alt="صورة ${escapeHtml(member.name)}" loading="lazy" decoding="async"></span>`;
     }
 
     return `<span class="member-avatar" aria-label="لا توجد صورة">${escapeHtml(initialsFromName(member.name))}</span>`;
@@ -2251,22 +2254,14 @@ function renderAppApprovalBadge(member) {
     `;
 }
 
-function renderMembers() {
+function renderMembersTable() {
     const query = (searchInput?.value || "").trim().toLowerCase();
-    const visibleMembers = membersCache.filter((member) => {
-        const searchValue = `${member.code} ${member.name} ${member.phone} ${member.weight} ${member.height} ${member.plan} ${member.price} ${member.remainingDays}`.toLowerCase();
-        return searchValue.includes(query);
-    });
-
-    totalMembers.textContent = `${membersCache.length.toLocaleString("ar-EG")} مشترك`;
-    if (membersPageCount) {
-        membersPageCount.textContent = `${membersCache.length.toLocaleString("ar-EG")} مشترك`;
-    }
-    statTotal.textContent = membersCache.length.toLocaleString("ar-EG");
-    statLastCode.textContent = membersCache[0]?.code || "-";
-    statLastDate.textContent = membersCache[0] ? formatDate(membersCache[0].createdAt) : "-";
-    renderSessionsPage();
-    renderWhatsAppAutoReminders();
+    const visibleMembers = query
+        ? membersCache.filter((member) => {
+            const searchValue = `${member.code} ${member.name} ${member.phone} ${member.weight} ${member.height} ${member.plan} ${member.price} ${member.remainingDays}`.toLowerCase();
+            return searchValue.includes(query);
+        })
+        : membersCache;
 
     if (!visibleMembers.length) {
         membersTable.innerHTML = `<tr><td colspan="13" class="empty-cell">لسه مفيش مشتركين.</td></tr>`;
@@ -2290,6 +2285,23 @@ function renderMembers() {
             <td>${renderMemberActions(member)}</td>
         </tr>
     `).join("");
+}
+
+function renderMembers() {
+    totalMembers.textContent = `${membersCache.length.toLocaleString("ar-EG")} مشترك`;
+    if (membersPageCount) {
+        membersPageCount.textContent = `${membersCache.length.toLocaleString("ar-EG")} مشترك`;
+    }
+    statTotal.textContent = membersCache.length.toLocaleString("ar-EG");
+    statLastCode.textContent = membersCache[0]?.code || "-";
+    statLastDate.textContent = membersCache[0] ? formatDate(membersCache[0].createdAt) : "-";
+
+    // Query-dependent list is rendered on its own so search keystrokes stay light.
+    renderMembersTable();
+
+    // These lists don't change while typing in the search box — only on data changes.
+    renderSessionsPage();
+    renderWhatsAppAutoReminders();
 }
 
 function isSessionPlan(member) {
@@ -4418,7 +4430,12 @@ window.addEventListener("beforeunload", () => {
     stopAttendanceCamera();
 });
 
-searchInput?.addEventListener("input", renderMembers);
+let searchDebounceTimer = null;
+searchInput?.addEventListener("input", () => {
+    // Debounce so typing doesn't rebuild the whole table on every keystroke.
+    clearTimeout(searchDebounceTimer);
+    searchDebounceTimer = setTimeout(renderMembersTable, 160);
+});
 planSelect?.addEventListener("change", () => applyPlanDefaultsToForm(true));
 progressMonth?.addEventListener("change", renderProgressSummary);
 progressMemberSelect?.addEventListener("change", fillProgressFieldsFromMember);

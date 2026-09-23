@@ -1062,6 +1062,34 @@ async function handleApi(request, response) {
             };
         } else {
             members.unshift(member);
+            if (member.price > 0) {
+                try {
+                    const entries = await readJson(dataFiles.financeFile, []);
+                    const subId = `sub_${member.id}`;
+                    const finNote = `اشتراك جديد - ${member.name} - ${member.code}`;
+                    const finDate = String(member.subscriptionStartedAt || new Date().toISOString().slice(0, 10)).slice(0, 10);
+                    const existingFinIndex = entries.findIndex((item) => (
+                        String(item.id) === subId ||
+                        (item.note === finNote && item.date === finDate)
+                    ));
+
+                    if (existingFinIndex === -1) {
+                        const newFinEntry = {
+                            id: subId,
+                            type: "income",
+                            amount: Math.max(0, Math.round(Number(member.price || 0))),
+                            note: finNote,
+                            date: finDate,
+                            createdAt: new Date().toISOString()
+                        };
+                        entries.unshift(newFinEntry);
+                        await writeJson(dataFiles.financeFile, entries);
+                        await appendAuditLog(dataFiles, "finance:create", `وارد - ${member.price} (${finNote})`);
+                    }
+                } catch (e) {
+                    console.warn("Auto finance creation error:", e);
+                }
+            }
         }
         await writeJson(dataFiles.membersFile, members);
         await appendAuditLog(dataFiles, existingMemberIndex >= 0 ? "member:update" : "member:create", `${member.name} - ${member.code}`);
